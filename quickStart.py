@@ -12,6 +12,13 @@ from googleapiclient.errors import HttpError
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
+getStarred = 'is:starred'
+getUnread = 'is:unread'
+
+def getAllMails(service): 
+    inbox = service.users().messages().list(userId='me').execute()
+    return inbox
+
 
 def main():
     """Shows basic usage of the Gmail API.
@@ -38,7 +45,7 @@ def main():
     try:
         # Call the Gmail API
         service = build('gmail', 'v1', credentials=creds)
-        inbox = service.users().messages().list(userId='me').execute()
+        inbox = getAllMails(service)
         if (inbox):
             mes1 = inbox['messages'][0]['id']
             mescontent = service.users().messages().get(userId='me', id=mes1).execute()
