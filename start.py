@@ -53,8 +53,9 @@ while (1):
                 speakText("Fine so here are you latest 10 unread mails")
                 service = build('gmail', 'v1', credentials=creds)
                 inbox = getLastTenUnreadMails(service)
-                print(inbox)
                 for i in range(10):
+                    speakText(str(i+1)+" Email is :")
+                    speakText("   ")
                     messageContent = getMessageFromMessageID(
                         service, inbox[i]["id"])
                     # Removing Special characters and links from mail
