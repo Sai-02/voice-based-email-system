@@ -15,9 +15,25 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 getStarred = 'is:starred'
 getUnread = 'is:unread'
 
-def getAllMails(service): 
+
+def getAllMails(service):
     inbox = service.users().messages().list(userId='me').execute()
     return inbox
+
+
+def getLastTenUnreadMails(service):
+    inbox = service.users().messages().list(userId='me').execute()
+    return inbox["messages"]
+
+
+def getMessageFromMessageID(service, messageID):
+    mescontent = service.users().messages().get(userId='me', id=messageID).execute()
+    encodedMail = mescontent['payload']['parts'][0]['body']['data']
+    base64_message = encodedMail.replace("-", "+")
+    base64_message = base64_message.replace("_", "/")
+    message = base64.b64decode(base64_message)
+    # print(message.decode())
+    return message.decode()
 
 
 def main():
