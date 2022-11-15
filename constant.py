@@ -1,0 +1,5 @@
+REPLY_TO="Reply-To"
+SUBJECT="Subject"
+DELIVERED_TO="Delivered-To"
+MIME_TYPE_TEXT_PLAIN="text/plain"
+FROM="From"

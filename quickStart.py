@@ -1,8 +1,7 @@
 from __future__ import print_function
-
 import base64
 import os.path
-
+import re
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -28,12 +27,25 @@ def getLastTenUnreadMails(service):
 
 def getMessageFromMessageID(service, messageID):
     mescontent = service.users().messages().get(userId='me', id=messageID).execute()
-    encodedMail = mescontent['payload']['parts'][0]['body']['data']
+    # print(mescontent)
+    # encodedMail = mescontent['payload']['parts'][0]['body']['data']
+    # base64_message = encodedMail.replace("-", "+")
+    # base64_message = base64_message.replace("_", "/")
+    # message = base64.b64decode(base64_message)
+    # print(message.decode())
+    # return message.decode()
+    return mescontent
+
+
+def decodeMailBody(encodedMail):
     base64_message = encodedMail.replace("-", "+")
     base64_message = base64_message.replace("_", "/")
     message = base64.b64decode(base64_message)
-    # print(message.decode())
-    return message.decode()
+    decodedMessage = message.decode()
+    decodedMessage = re.sub(
+        r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', " ", decodedMessage)
+    decodedMessage = re.sub('<.*?>', '', decodedMessage)
+    return decodedMessage
 
 
 def main():
