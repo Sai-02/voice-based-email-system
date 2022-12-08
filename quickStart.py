@@ -24,6 +24,14 @@ def getLastTenUnreadMails(service):
     inbox = service.users().messages().list(userId='me').execute()
     return inbox["messages"]
 
+def isResponse1(resp):
+    return resp == "one" or resp == "on" or resp == "vun" or resp == "1"
+
+def isResponse2(resp):
+    return resp == "two" or resp == "tu" or resp == "too" or resp == "2"
+
+def isResponse3(resp):
+    return resp == "three" or resp == "thri" or resp == "tree" or resp == "3"
 
 def getMessageFromMessageID(service, messageID):
     mescontent = service.users().messages().get(userId='me', id=messageID).execute()
@@ -47,6 +55,17 @@ def decodeMailBody(encodedMail):
     decodedMessage = re.sub('<.*?>', '', decodedMessage)
     return decodedMessage
 
+def message_full_recursion(m):  
+     for i in m:
+        mimeType = (i['mimeType'])
+        print(mimeType)
+        
+        if (i['mimeType']) in ('text/plain','text/html'):
+            return i['body']['data']
+        elif 'parts' in i:
+            print('recursing')
+            return message_full_recursion(i['parts'])
+     return ""
 
 def main():
     """Shows basic usage of the Gmail API.
