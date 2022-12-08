@@ -25,13 +25,13 @@ def getLastTenUnreadMails(service):
     return inbox["messages"]
 
 def isResponse1(resp):
-    return resp == "one" or resp == "on" or resp == "vun" or resp == "1"
+    return resp == "one" or resp == "on" or resp == "vun" or resp == "One" or resp == "On" or resp == "Vun" or resp == "1"
 
 def isResponse2(resp):
-    return resp == "two" or resp == "tu" or resp == "too" or resp == "2"
+    return resp == "two" or resp == "tu" or resp == "too" or resp == "Two" or resp == "Tu" or resp == "Too" or resp == "2"
 
 def isResponse3(resp):
-    return resp == "three" or resp == "thri" or resp == "tree" or resp == "3"
+    return resp == "three" or resp == "thri" or resp == "tree" or resp == "Three" or resp == "Thri" or resp == "Tree" or resp == "3"
 
 def getMessageFromMessageID(service, messageID):
     mescontent = service.users().messages().get(userId='me', id=messageID).execute()
