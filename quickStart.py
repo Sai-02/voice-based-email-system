@@ -24,14 +24,18 @@ def getLastTenUnreadMails(service):
     inbox = service.users().messages().list(userId='me').execute()
     return inbox["messages"]
 
+
 def isResponse1(resp):
     return resp == "one" or resp == "on" or resp == "vun" or resp == "One" or resp == "On" or resp == "Vun" or resp == "1"
+
 
 def isResponse2(resp):
     return resp == "two" or resp == "tu" or resp == "too" or resp == "Two" or resp == "Tu" or resp == "Too" or resp == "2"
 
+
 def isResponse3(resp):
     return resp == "three" or resp == "thri" or resp == "tree" or resp == "Three" or resp == "Thri" or resp == "Tree" or resp == "3"
+
 
 def getMessageFromMessageID(service, messageID):
     mescontent = service.users().messages().get(userId='me', id=messageID).execute()
@@ -55,26 +59,28 @@ def decodeMailBody(encodedMail):
     decodedMessage = re.sub('<.*?>', '', decodedMessage)
     return decodedMessage
 
-def message_full_recursion(m):  
-     for i in m:
+
+def message_full_recursion(m):
+    for i in m:
         mimeType = (i['mimeType'])
-        
-        
+
         if (i['mimeType']) in ('text/plain'):
             return i['body']['data']
         elif 'parts' in i:
             return message_full_recursion(i['parts'])
-     return ""
+    return ""
 
-def message_full_recursion_html(m):  
-     for i in m:
+
+def message_full_recursion_html(m):
+    for i in m:
         mimeType = (i['mimeType'])
-        
+
         if (i['mimeType']) in ('text/html'):
             return i['body']['data']
         elif 'parts' in i:
             return message_full_recursion_html(i['parts'])
-     return ""
+    return ""
+
 
 def main():
     """Shows basic usage of the Gmail API.
