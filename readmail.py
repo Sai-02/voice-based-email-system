@@ -23,7 +23,7 @@ for i in range(10):
     
     tempo = decodeMailBody(tempo)
     # f=open("text"+())
-    with open("dataop"+str(i+1)+".json", 'x') as f:
+    with open("dataop"+str(i+1)+".json", 'w') as f:
         json.dump(tempo, f, indent=4)
     # print(tempo)
     print("\n\n\n\n\n")

@@ -58,25 +58,22 @@ def decodeMailBody(encodedMail):
 def message_full_recursion(m):  
      for i in m:
         mimeType = (i['mimeType'])
-        print(mimeType)
+        
         
         if (i['mimeType']) in ('text/plain'):
             return i['body']['data']
         elif 'parts' in i:
-            print('recursing')
             return message_full_recursion(i['parts'])
      return ""
 
 def message_full_recursion_html(m):  
      for i in m:
         mimeType = (i['mimeType'])
-        print(mimeType)
         
         if (i['mimeType']) in ('text/html'):
             return i['body']['data']
         elif 'parts' in i:
-            print('recursing')
-            return message_full_recursion(i['parts'])
+            return message_full_recursion_html(i['parts'])
      return ""
 
 def main():
