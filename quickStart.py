@@ -6,6 +6,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from bs4 import BeautifulSoup
 from googleapiclient.errors import HttpError
 
 # If modifying these scopes, delete the file token.json.
@@ -54,9 +55,9 @@ def decodeMailBody(encodedMail):
     base64_message = base64_message.replace("_", "/")
     message = base64.b64decode(base64_message)
     decodedMessage = message.decode()
-    decodedMessage = re.sub(
-        r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', " ", decodedMessage)
-    decodedMessage = re.sub('<.*?>', '', decodedMessage)
+    # decodedMessage = re.sub(
+    #     r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', " ", decodedMessage)
+    # decodedMessage = re.sub('<.*?>', '', decodedMessage)
     return decodedMessage
 
 
@@ -127,3 +128,10 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+def remove_tags(html):
+    soup = BeautifulSoup(html, "html.parser")
+  
+    for data in soup(['style', 'script']):
+        data.decompose()
+    return ' '.join(soup.stripped_strings)
