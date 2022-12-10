@@ -13,6 +13,7 @@ from test import speakText, listen
 import speech_recognition as sr
 from quickStart import getLastTenUnreadMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3
 import pyttsx3
+from readmail import readmail
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 if os.path.exists('token.json'):
     creds = Credentials.from_authorized_user_file('token.json', SCOPES)
@@ -73,34 +74,20 @@ while (1):
                         print("This was your "+str(i+1)+" mail")
                         # speakText("Now next mail is        ")
 
-
-
-                        # with open("data"+str(i+1)+".json", 'w') as f:
-                        #     json.dump(dictionary, f, indent=4)
-
-                    # tempo = re.sub(
-                    #     r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', " ", messageContent)
-                    # temp = re.sub('<.*?>', '', temp)
-                    # print("sgswsbjhiwbasfihbw")
-                    # mailBy = [sub['value'] for sub in dictionary['payload']['headers'] if sub['name'] == constant.REPLY_TO][0]
-                    # Subject= [sub['value'] for sub in dictionary['payload']['headers'] if sub['name'] == constant.SUBJECT][0]
-                    # senderDetails=[sub['value'] for sub in dictionary['payload']['headers'] if sub['name'] == constant.FROM][0]
-                    # senderName = senderDetails.split('"')[1]
-                    # encodedMailBody= [sub['body']['data'] for sub in dictionary['payload']['parts'] if sub['mimeType'] == constant.MIME_TYPE_TEXT_PLAIN][0]
-                    # mailBody = decodeMailBody(encodedMailBody)
-                    # print("chalja",mailBy,Subject, senderName, mailBody)
-
-                    # for i in range(10):
-                    #     speakText(str(i+1)+" Email is :")
-                    #     speakText("   ")
-                    #     messageContent = getMessageFromMessageID(
-                    #         service, inbox[i]["id"])
-                    #     # Removing Special characters and links from mail
-                    #     messageContent = re.sub(
-                    #         r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', " ", messageContent)
-                    #     messageContent = re.sub('<.*?>', '', messageContent)
-                    #     print(messageContent)
-                    #     speakText(messageContent)
+                        # mailBy = [sub['value'] for sub in dictionary['payload']
+                        #           ['headers'] if sub['name'] == constant.REPLY_TO][0]
+                        # Subject = [sub['value'] for sub in dictionary['payload']
+                        #            ['headers'] if sub['name'] == constant.SUBJECT][0]
+                        # senderDetails = [sub['value'] for sub in dictionary['payload']
+                        #                  ['headers'] if sub['name'] == constant.FROM][0]
+                        # senderName = senderDetails.split('"')[1]
+                        # print(dictionary)
+                        try:
+                            mailBody = readmail(dictionary)
+                            print(mailBody)
+                            speakText(mailBody)
+                        except Exception as e:
+                            print(e)
 
                 elif (isResponse2(readMailType)):
                     print("starred")
@@ -118,19 +105,5 @@ while (1):
                 break
 
     except:
-        continue
-
-# service = build('gmail', 'v1', credentials=creds)
-# inbox = getLastTenUnreadMails(service)
-# for i in range(2):
-#     try:
-#         print(str(i+1)+" Email is :")
-#         messageContent = getMessageFromMessageID(
-#             service, inbox[i]["id"])
-#         # Removing Special characters and links from mail
-#         messageContent = re.sub(
-#             r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', " ", messageContent)
-#         messageContent = re.sub('<.*?>', '', messageContent)
-#         print(messageContent)
-#     except:
-#         print("hehe fail")
+        print("Something went wrong !!")
+        break

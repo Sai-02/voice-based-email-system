@@ -15,28 +15,22 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 getStarred = 'is:starred'
 getUnread = 'is:unread'
 
-
 def getAllMails(service):
     inbox = service.users().messages().list(userId='me').execute()
     return inbox
-
 
 def getLastTenUnreadMails(service):
     inbox = service.users().messages().list(userId='me').execute()
     return inbox["messages"]
 
-
 def isResponse1(resp):
     return resp == "one" or resp == "on" or resp == "vun" or resp == "One" or resp == "On" or resp == "Vun" or resp == "1"
-
 
 def isResponse2(resp):
     return resp == "two" or resp == "tu" or resp == "too" or resp == "Two" or resp == "Tu" or resp == "Too" or resp == "2"
 
-
 def isResponse3(resp):
     return resp == "three" or resp == "thri" or resp == "tree" or resp == "Three" or resp == "Thri" or resp == "Tree" or resp == "3"
-
 
 def getMessageFromMessageID(service, messageID):
     mescontent = service.users().messages().get(userId='me', id=messageID).execute()
@@ -49,17 +43,12 @@ def getMessageFromMessageID(service, messageID):
     # return message.decode()
     return mescontent
 
-
 def decodeMailBody(encodedMail):
     base64_message = encodedMail.replace("-", "+")
     base64_message = base64_message.replace("_", "/")
     message = base64.b64decode(base64_message)
     decodedMessage = message.decode()
-    # decodedMessage = re.sub(
-    #     r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', " ", decodedMessage)
-    # decodedMessage = re.sub('<.*?>', '', decodedMessage)
     return decodedMessage
-
 
 def message_full_recursion(m):
     for i in m:
@@ -71,7 +60,6 @@ def message_full_recursion(m):
             return message_full_recursion(i['parts'])
     return ""
 
-
 def message_full_recursion_html(m):
     for i in m:
         mimeType = (i['mimeType'])
@@ -81,7 +69,6 @@ def message_full_recursion_html(m):
         elif 'parts' in i:
             return message_full_recursion_html(i['parts'])
     return ""
-
 
 def main():
     """Shows basic usage of the Gmail API.
@@ -125,13 +112,5 @@ def main():
         # TODO(developer) - Handle errors from gmail API.
         print(f'An error occurred: {error}')
 
-
 if __name__ == '__main__':
     main()
-
-def remove_tags(html):
-    soup = BeautifulSoup(html, "html.parser")
-  
-    for data in soup(['style', 'script']):
-        data.decompose()
-    return ' '.join(soup.stripped_strings)
