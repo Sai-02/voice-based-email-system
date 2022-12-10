@@ -11,7 +11,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from test import speakText, listen
 import speech_recognition as sr
-from quickStart import getLastTenUnreadMails, getMessageFromMessageID,decodeMailBody, isResponse1, isResponse2, isResponse3
+from quickStart import getLastTenUnreadMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3
 import pyttsx3
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 if os.path.exists('token.json'):
@@ -29,29 +29,54 @@ if not creds or not creds.valid:
         token.write(creds.to_json())
 while (1):
     try:
-        speakText("What do you want to do")
-        speakText(" 1. Read Email ")
-        speakText(" 2. Send  Email ")
+        # speakText("What do you want to do")
+        # speakText(" 1. Read Email ")
+        # speakText(" 2. Send  Email ")
+        print("What do you want to do")
+        print(" 1. Read Email ")
+        print(" 2. Send  Email ")
+
         r = sr.Recognizer()
         with sr.Microphone() as source2:
             r.adjust_for_ambient_noise(source2, duration=0.2)
-            readOrSendAudio = r.listen(source2)
-            readOrSend = r.recognize_google(readOrSendAudio, language='en-IN')
+            # readOrSendAudio = r.listen(source2)
+            # readOrSend = r.recognize_google(readOrSendAudio, language='en-IN')
+            readOrSend = input()
             if (isResponse1(readOrSend)):
-                speakText("Okay so you want to read your emails")
-                speakText("Please specify what mails do you want to read?")
-                speakText("1 Unread mails")
-                speakText("2 Starred mails")
-                speakText("3 Full inbox")
-                readMailTypeAudio = r.listen(source2)
-                readMailType = r.recognize_google(readMailTypeAudio, language='en-IN')
+                print("Okay so you want to read your emails")
+                print("Please specify what mails do you want to read?")
+                print("1 Unread mails")
+                print("2 Starred mails")
+                print("3 Full inbox")
+                # speakText("Okay so you want to read your emails")
+                # speakText("Please specify what mails do you want to read?")
+                # speakText("1 Unread mails")
+                # speakText("2 Starred mails")
+                # speakText("3 Full inbox")
+                # readMailTypeAudio = r.listen(source2)
+                # readMailType = r.recognize_google(readMailTypeAudio, language='en-IN')
+                readMailType = input()
                 if (isResponse1(readMailType)):
-                    speakText("Reading out latest unread mails: ")
+                    # speakText("Reading out latest unread mails: ")
+                    print("Reading out latest unread mails: ")
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenUnreadMails(service)
-                    for i in range(2):
-                        dictionary=getMessageFromMessageID(service, inbox[i]["id"])
-                        speakText(dictionary['snippet'])
+                    for i in range(10):
+                        dictionary = getMessageFromMessageID(
+                            service, inbox[i]["id"])
+                        print(dictionary['snippet'])
+                        print("                                      ")
+                        # print("This was your "+(i+1)+" mail")
+                        print("Now next mail is        ")
+                        # speakText(dictionary['snippet'])
+                        # speakText("                                      ")
+                        print("This was your "+str(i+1)+" mail")
+                        # speakText("Now next mail is        ")
+
+
+
+                        # with open("data"+str(i+1)+".json", 'w') as f:
+                        #     json.dump(dictionary, f, indent=4)
 
                     # tempo = re.sub(
                     #     r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', " ", messageContent)
@@ -85,11 +110,12 @@ while (1):
                     speakText("Can you repeat ?")
                     continue
 
-            elif(isResponse2(readOrSend)):
+            elif (isResponse2(readOrSend)):
                 print("writing mail")
             else:
-                speakText("Sorry can you repeat yourself?")
-                continue
+                # speakText("Sorry can you repeat yourself?")
+                print("Sorry can you repeat yourself?")
+                break
 
     except:
         continue
