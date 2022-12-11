@@ -4,6 +4,7 @@ import pyttsx3
 
 def speakText(command):
     engine = pyttsx3.init()
+    engine.setProperty('rate', 150)
     engine.say(command)
     engine.runAndWait()
 

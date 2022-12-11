@@ -61,31 +61,58 @@ while (1):
                     # speakText("Reading out latest unread mails: ")
                     print("Reading out latest unread mails: ")
                     service = build('gmail', 'v1', credentials=creds)
-                    inbox = getLastTenUnreadMails(service)
+                    inbox = getLastTenUnreadMails(
+                        service, constant.GET_PRIMARY)
                     for i in range(10):
                         dictionary = getMessageFromMessageID(
                             service, inbox[i]["id"])
-                        print(dictionary['snippet'])
+                        # print(dictionary['snippet'])
                         print("                                      ")
                         # print("This was your "+(i+1)+" mail")
-                        print("Now next mail is        ")
+                        # print("Now next mail is        ")
                         # speakText(dictionary['snippet'])
                         # speakText("                                      ")
                         print("This was your "+str(i+1)+" mail")
                         # speakText("Now next mail is        ")
 
-                        # mailBy = [sub['value'] for sub in dictionary['payload']
-                        #           ['headers'] if sub['name'] == constant.REPLY_TO][0]
-                        # Subject = [sub['value'] for sub in dictionary['payload']
-                        #            ['headers'] if sub['name'] == constant.SUBJECT][0]
-                        # senderDetails = [sub['value'] for sub in dictionary['payload']
-                        #                  ['headers'] if sub['name'] == constant.FROM][0]
-                        # senderName = senderDetails.split('"')[1]
-                        # print(dictionary)
                         try:
-                            mailBody = readmail(dictionary)
-                            print(mailBody)
-                            speakText(mailBody)
+                            # श्री श्री श्री श्री आयुष 1008 जी महाराज
+                            senderDetails = [sub['value'] for sub in dictionary['payload']
+                                             ['headers'] if sub['name'] == constant.FROM][0]
+                            subject = [sub['value'] for sub in dictionary['payload']
+                                       ['headers'] if sub['name'] == constant.SUBJECT][0]
+                            senderarr = senderDetails.split(' ')
+                            senderarrlen = len(senderarr)
+                            senderEmail = senderarr[senderarrlen - 1]
+                            # Removing "<" & ">" from email
+                            senderEmail = re.sub("\<", " ", senderEmail)
+                            senderEmail = re.sub("\>", " ", senderEmail)
+                            senderName = " ".join(
+                                senderarr[0: (senderarrlen - 1)])
+                            # print(senderName, senderEmail)
+                            # print(senderName + " says " + subject)
+                            # print("1 Read email")
+                            # print("2 Next mail")
+                            # print("3 Go back")
+                            speakText(senderName + " says " + subject)
+                            speakText("1 Read email")
+                            speakText("2 Next mail")
+                            speakText("3 Go back")
+                            shouldReadNext = input()
+                            if (isResponse1(shouldReadNext)):
+                                speakText("Here is the mail: ")
+                                mailBody = readmail(dictionary)
+                                with open('myfile'+str(i+1)+'.json', 'w', encoding='utf8') as json_file:
+                                    json.dump(mailBody, json_file,
+                                              ensure_ascii=True)
+                                # print(mailBody)
+                                speakText(mailBody)
+                                continue
+                            if (isResponse2(shouldReadNext)):
+                                continue
+                            if (isResponse3(shouldReadNext)):
+                                break
+
                         except Exception as e:
                             print(e)
 

@@ -7,10 +7,19 @@ import demoji
 
 def readmail(data):
     # Getting data in text format
-    content = message_full_recursion(data["payload"]["parts"])
-    if (content == ""):
-        # If text format is not present then take html format
-        content = message_full_recursion_html(data['payload']["parts"])
+    content = ""
+    try:
+        if "parts" in data["payload"]:
+            content = message_full_recursion(data["payload"]["parts"])
+            if (content == ""):
+                content = message_full_recursion_html(data['payload']["parts"])
+            if(content == ""):
+                content = data['payload']["body"]["data"]
+        else:
+            content = data['payload']["body"]["data"]
+            
+    except:
+        print("Unexpected error")
     content = decodeMailBody(content)
     content = content.replace('\r', '')
     content = content.replace('\n', '')
@@ -54,6 +63,7 @@ def removeUnicodeCharacters(content):
     content = unicoderemove.sub(r'', content)
     anythingleft = content.encode("ascii", "ignore")
     content = anythingleft.decode()
+    content = removeLinks(content)
     return content
 
 
@@ -69,4 +79,10 @@ def removeBrackets(content):
     content = re.sub("\<.*?\>", " ", content)
     content = re.sub("\{.*?\}", " ", content)
     content = re.sub('=+', '=', content)
+    return content
+
+
+def removeLinks(content):
+    content = re.sub(r'http\S+', ' Link ', content)
+    content = re.sub(r'https\S+', ' Link ', content)
     return content
