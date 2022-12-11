@@ -11,7 +11,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from test import speakText, listen
 import speech_recognition as sr
-from quickStart import getLastTenUnreadMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3
+from quickStart import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3
 import pyttsx3
 from readmail import readmail
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
@@ -30,53 +30,41 @@ if not creds or not creds.valid:
         token.write(creds.to_json())
 while (1):
     try:
-        # speakText("What do you want to do")
-        # speakText(" 1. Read Email ")
-        # speakText(" 2. Send  Email ")
-        print("What do you want to do")
-        print(" 1. Read Email ")
-        print(" 2. Send  Email ")
+        speakText("What do you want to do")
+        speakText(" 1. Read Email ")
+        speakText(" 2. Send  Email ")
 
         r = sr.Recognizer()
         with sr.Microphone() as source2:
             r.adjust_for_ambient_noise(source2, duration=0.2)
-            # readOrSendAudio = r.listen(source2)
-            # readOrSend = r.recognize_google(readOrSendAudio, language='en-IN')
-            readOrSend = input()
+            readOrSendAudio = r.listen(source2)
+            readOrSend = r.recognize_google(readOrSendAudio, language='en-IN')
+            print(readOrSend)
+            # readOrSend = input()
             if (isResponse1(readOrSend)):
-                print("Okay so you want to read your emails")
-                print("Please specify what mails do you want to read?")
-                print("1 Unread mails")
-                print("2 Starred mails")
-                print("3 Full inbox")
-                # speakText("Okay so you want to read your emails")
-                # speakText("Please specify what mails do you want to read?")
-                # speakText("1 Unread mails")
-                # speakText("2 Starred mails")
-                # speakText("3 Full inbox")
-                # readMailTypeAudio = r.listen(source2)
-                # readMailType = r.recognize_google(readMailTypeAudio, language='en-IN')
-                readMailType = input()
+                speakText("Okay so you want to read your emails")
+                speakText("Please specify what mails do you want to read?")
+                speakText("1 Unread mails")
+                speakText("2 Starred mails")
+                speakText("3 Full inbox")
+                readMailTypeAudio = r.listen(source2)
+                readMailType = r.recognize_google(
+                    readMailTypeAudio, language='en-IN')
+                print(readMailType)
+                # readMailType = input()
                 if (isResponse1(readMailType)):
-                    # speakText("Reading out latest unread mails: ")
-                    print("Reading out latest unread mails: ")
+                    speakText("Reading out latest unread mails: ")
                     service = build('gmail', 'v1', credentials=creds)
-                    inbox = getLastTenUnreadMails(
+                    inbox = getLastTenMails(
                         service, constant.GET_PRIMARY)
                     for i in range(10):
                         dictionary = getMessageFromMessageID(
                             service, inbox[i]["id"])
-                        # print(dictionary['snippet'])
-                        print("                                      ")
-                        # print("This was your "+(i+1)+" mail")
-                        # print("Now next mail is        ")
-                        # speakText(dictionary['snippet'])
-                        # speakText("                                      ")
-                        print("This was your "+str(i+1)+" mail")
+                        # print("                                      ")
+                        # print("This was your "+str(i+1)+" mail")
                         # speakText("Now next mail is        ")
-
                         try:
-                            # श्री श्री श्री श्री आयुष 1008 जी महाराज
+                            # जय श्री राम
                             senderDetails = [sub['value'] for sub in dictionary['payload']
                                              ['headers'] if sub['name'] == constant.FROM][0]
                             subject = [sub['value'] for sub in dictionary['payload']
@@ -89,24 +77,21 @@ while (1):
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
-                            # print(senderName, senderEmail)
-                            # print(senderName + " says " + subject)
-                            # print("1 Read email")
-                            # print("2 Next mail")
-                            # print("3 Go back")
                             speakText(senderName + " says " + subject)
                             speakText("1 Read email")
                             speakText("2 Next mail")
                             speakText("3 Go back")
-                            shouldReadNext = input()
+                            shouldReadNextAudio = r.listen(source2)
+                            shouldReadNext = r.recognize_google(
+                                shouldReadNextAudio, language='en-IN')
+                            print(shouldReadNext)
+                            # shouldReadNext = input()
                             if (isResponse1(shouldReadNext)):
                                 speakText("Here is the mail: ")
                                 mailBody = readmail(dictionary)
-                                with open('myfile'+str(i+1)+'.json', 'w', encoding='utf8') as json_file:
-                                    json.dump(mailBody, json_file,
-                                              ensure_ascii=True)
-                                # print(mailBody)
                                 speakText(mailBody)
+                                speakText("                       ")
+                                speakText("Over")
                                 continue
                             if (isResponse2(shouldReadNext)):
                                 continue
@@ -118,6 +103,7 @@ while (1):
 
                 elif (isResponse2(readMailType)):
                     print("starred")
+
                 elif (isResponse3(readMailType)):
                     print("full inbox")
                 else:

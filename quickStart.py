@@ -21,13 +21,12 @@ def getAllMails(service):
     return inbox
 
 
-def getLastTenUnreadMails(service, query):
+def getLastTenMails(service, query):
     inbox = service.users().messages().list(userId='me', q=query).execute()
     return inbox["messages"]
 
-
 def isResponse1(resp):
-    return resp == "one" or resp == "on" or resp == "vun" or resp == "One" or resp == "On" or resp == "Vun" or resp == "1"
+    return resp == "one" or resp == "on" or resp == "vun" or resp == "One" or resp == "On" or resp == "Vun" or resp == "1" or resp == "man" or resp == "Man" or resp == "wall" or resp == "Wall"
 
 
 def isResponse2(resp):
@@ -35,7 +34,7 @@ def isResponse2(resp):
 
 
 def isResponse3(resp):
-    return resp == "three" or resp == "thri" or resp == "tree" or resp == "Three" or resp == "Thri" or resp == "Tree" or resp == "3"
+    return resp == "three" or resp == "thri" or resp == "tree" or resp == "Three" or resp == "Thri" or resp == "Tree" or resp == "3" or resp == "free" or resp == "Free"
 
 
 def getMessageFromMessageID(service, messageID):
