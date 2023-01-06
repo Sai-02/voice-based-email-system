@@ -1,4 +1,5 @@
 from __future__ import print_function
+from email.message import EmailMessage
 import json
 import constant
 import base64
@@ -14,7 +15,11 @@ import speech_recognition as sr
 from quickStart import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3
 import pyttsx3
 from readmail import readmail
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
+          "https://mail.google.com/",
+          "https://www.googleapis.com/auth/gmail.modify",
+          "https://www.googleapis.com/auth/gmail.compose",
+          "https://www.googleapis.com/auth/gmail.send"]
 if os.path.exists('token.json'):
     creds = Credentials.from_authorized_user_file('token.json', SCOPES)
 # If there are no (valid) credentials available, let the user log in.
@@ -157,7 +162,37 @@ while (1):
                     continue
 
             elif (isResponse2(readOrSend)):
-                print("writing mail")
+                speakText("What is the subject ofthe mail?")
+                subject = input()
+                speakText("What is the body of the email")
+                body = input()
+                speakText("What is recievers's  mai id")
+                mailID = input()
+                try:
+                    service = build('gmail', 'v1', credentials=creds)
+                    message = EmailMessage()
+
+                    message.set_content(body)
+
+                    message['To'] = mailID,
+                    message['From'] = 'saiprashant.saxena@gmail.com'
+                    message['Subject'] = subject
+
+                    # encoded message
+                    encoded_message = base64.urlsafe_b64encode(message.as_bytes()) \
+                        .decode()
+
+                    create_message = {
+                        'raw': encoded_message
+                    }
+                    # pylint: disable=E1101
+                    send_message = (service.users().messages().send
+                                    (userId="me", body=create_message).execute())
+                    print(F'Message Id: {send_message["id"]}')
+                except HttpError as error:
+                    print(F'An error occurred: {error}')
+                    send_message = None
+
             else:
                 # speakText("Sorry can you repeat yourself?")
                 print("Sorry can you repeat yourself?")

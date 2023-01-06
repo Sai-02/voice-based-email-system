@@ -10,7 +10,11 @@ from bs4 import BeautifulSoup
 from googleapiclient.errors import HttpError
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
+          "https://mail.google.com/",
+          "https://www.googleapis.com/auth/gmail.modify",
+          "https://www.googleapis.com/auth/gmail.compose",
+          "https://www.googleapis.com/auth/gmail.send"]
 
 getStarred = 'is:starred'
 getUnread = 'is:unread'
@@ -24,6 +28,7 @@ def getAllMails(service):
 def getLastTenMails(service, query):
     inbox = service.users().messages().list(userId='me', q=query).execute()
     return inbox["messages"]
+
 
 def isResponse1(resp):
     return resp == "one" or resp == "on" or resp == "vun" or resp == "One" or resp == "On" or resp == "Vun" or resp == "1" or resp == "man" or resp == "Man" or resp == "wall" or resp == "Wall"
