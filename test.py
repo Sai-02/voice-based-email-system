@@ -3,13 +3,13 @@ import pyttsx3
 
 
 def speakText(command):
+    print(command)
     engine = pyttsx3.init()
     # voice = engine.getProperty('voices')
     # engine.setProperty('voice', voice[1].id)
     engine.setProperty('rate', 150)
     engine.say(command)
     engine.runAndWait()
-    print(command)
 
 
 def listen():
