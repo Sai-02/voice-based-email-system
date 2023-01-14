@@ -154,7 +154,7 @@ while (1):
                 subject = listen()
                 speakText("What is the body of the email")
                 body = listen()
-                speakText("What is recievers's  mai id")
+                speakText("What is recievers's  mail id")
                 mailID = listen()
                 try:
                     service = build('gmail', 'v1', credentials=creds)
@@ -162,8 +162,9 @@ while (1):
 
                     message.set_content(body)
 
-                    message['To'] = mailID,
-                    message['From'] = 'saiprashant.saxena@gmail.com'
+                    message['To'] = mailID.replace(" ","")
+                    print(message['To'])
+                    message['From'] = 'neeraj.sati123@gmail.com'
                     message['Subject'] = subject
 
                     # encoded message
@@ -173,9 +174,8 @@ while (1):
                     create_message = {
                         'raw': encoded_message
                     }
-                    # pylint: disable=E1101
-                    send_message = (service.users().messages().send
-                                    (userId="me", body=create_message).execute())
+                    # send_message = (service.users().messages().send
+                    #                 (userId="me", body=create_message).execute())
                     print(F'Message Id: {send_message["id"]}')
                 except HttpError as error:
                     print(F'An error occurred: {error}')
