@@ -32,7 +32,7 @@ def getLastTenMails(service, query):
 
 
 def isResponse1(resp):
-    return resp == "one" or resp == "on" or resp == "vun" or resp == "One" or resp == "On" or resp == "Vun" or resp == "1" or resp == "man" or resp == "Man" or resp == "wall" or resp == "Wall"
+    return resp == "one" or resp == "on" or resp == "vun" or resp == "One" or resp == "On" or resp == "Vun" or resp == "1" or resp == "man" or resp == "Man" or resp == "wall" or resp == "Read Email" or resp == "Read mail" or resp == "Read nail" or resp == "Read E mail" or resp == "read e mail" or resp == "reed mail"
 
 
 def isResponse2(resp):
@@ -41,6 +41,48 @@ def isResponse2(resp):
 
 def isResponse3(resp):
     return resp == "three" or resp == "thri" or resp == "tree" or resp == "Three" or resp == "Thri" or resp == "Tree" or resp == "3" or resp == "free" or resp == "Free"
+
+
+def isResponseRead(resp):
+    for x in ["reed", "read", "re ead"]:
+        if (resp and resp.lower().find(x) != -1):
+            return 1
+    return 0
+
+
+def isResponseSend(resp):
+    for x in ["send", "sent", "sed", "sad", "sand"]:
+        if (resp and resp.lower().find(x) != -1):
+            return 1
+    return 0
+
+
+def isResponseUnread(resp):
+    for x in ["unread", "un read", "un red", "umread", "100", "hundred"]:
+        if (resp and resp.lower().find(x) != -1):
+            return 1
+    return 0
+
+
+def isResponseStarred(resp):
+    for x in ["star", "sitar"]:
+        if (resp and resp.lower().find(x) != -1):
+            return 1
+    return 0
+
+
+def isResponseFullInbox(resp):
+    for x in ["full", "inbox", "in box", "fool", "box"]:
+        if (resp and resp.find(x) != -1):
+            return 1
+    return 0
+
+
+def isResponseNext(resp):
+    for x in ["next", "ext", "text", "test", "axe", "ex", "nest"]:
+        if (resp and resp.find(x) != -1):
+            return 1
+    return 0
 
 
 def getMessageFromMessageID(service, messageID):
@@ -140,14 +182,16 @@ if __name__ == '__main__':
 
 def listen():
     r = sr.Recognizer()
-    print(sr.Microphone.list_microphone_names())
+    # print(sr.Microphone.list_microphone_names())
+    print("listening...")
     with sr.Microphone() as source:
-        r.adjust_for_ambient_noise(source, duration=1)
+        r.adjust_for_ambient_noise(source, duration=0.1)
         # r.energy_threshold()
         audio = r.listen(source)
         try:
             text = r.recognize_google(audio)
+            print(text)
             return text
         except:
             print("sorry, could not recognise")
-            listen()
+            # listen()
