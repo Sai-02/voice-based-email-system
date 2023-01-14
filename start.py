@@ -12,7 +12,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from test import speakText, listen
 import speech_recognition as sr
-from quickStart import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3
+from quickStart import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext
 import pyttsx3
 from readmail import readmail
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -44,20 +44,15 @@ while (1):
             # r.adjust_for_ambient_noise(source2, duration=0.2)
             # readOrSendAudio = r.listen(source2)
             # readOrSend = r.recognize_google(readOrSendAudio, language='en-IN')
-            # print(readOrSend)
-            readOrSend = input()
-            if (isResponse1(readOrSend)):
+            readOrSend = listen()
+            if (isResponseRead(readOrSend)):
                 speakText("Okay so you want to read your emails")
                 speakText("Please specify what mails do you want to read?")
                 speakText("1 Unread mails")
                 speakText("2 Starred mails")
                 speakText("3 Full inbox")
-                # readMailTypeAudio = r.listen(source2)
-                # readMailType = r.recognize_google(
-                #     readMailTypeAudio, language='en-IN')
-                # print(readMailType)
-                readMailType = input()
-                if (isResponse1(readMailType)):
+                readMailType = listen()
+                if (isResponseUnread(readMailType)):
                     speakText("Reading out latest unread mails: ")
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenMails(
@@ -86,28 +81,24 @@ while (1):
                             speakText("1 Read email")
                             speakText("2 Next mail")
                             speakText("3 Go back")
-                            # shouldReadNextAudio = r.listen(source2)
-                            # shouldReadNext = r.recognize_google(
-                            #     shouldReadNextAudio, language='en-IN')
-                            # print(shouldReadNext)
-                            shouldReadNext = input()
-                            if (isResponse1(shouldReadNext)):
+                            shouldReadNext = listen()
+                            if (isResponseRead(shouldReadNext)):
                                 speakText("Here is the mail: ")
                                 mailBody = readmail(dictionary)
                                 speakText(mailBody)
                                 speakText("                       ")
                                 speakText("Over")
                                 continue
-                            if (isResponse2(shouldReadNext)):
+                            if (isResponseNext(shouldReadNext)):
                                 continue
-                            if (isResponse3(shouldReadNext)):
+                            else:
                                 break
 
                         except Exception as e:
                             print(e)
 
-                elif (isResponse1(readMailType)):
-                    speakText("Reading out latest unread mails: ")
+                elif (isResponseStarred(readMailType)):
+                    speakText("Reading out latest Starred mails: ")
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenMails(
                         service, constant.GET_STARRED)
@@ -135,39 +126,36 @@ while (1):
                             speakText("1 Read email")
                             speakText("2 Next mail")
                             speakText("3 Go back")
-                            # shouldReadNextAudio = r.listen(source2)
-                            # shouldReadNext = r.recognize_google(
-                            #     shouldReadNextAudio, language='en-IN')
-                            # print(shouldReadNext)
-                            shouldReadNext = input()
-                            if (isResponse1(shouldReadNext)):
+                            shouldReadNext = listen()
+                            if (isResponseRead(shouldReadNext)):
                                 speakText("Here is the mail: ")
                                 mailBody = readmail(dictionary)
                                 speakText(mailBody)
                                 speakText("                       ")
                                 speakText("Over")
                                 continue
-                            if (isResponse2(shouldReadNext)):
+                            if (isResponseNext(shouldReadNext)):
                                 continue
-                            if (isResponse3(shouldReadNext)):
+                            else:
                                 break
 
                         except Exception as e:
                             print(e)
 
-                elif (isResponse3(readMailType)):
+                elif (isResponseFullInbox(readMailType)):
                     print("full inbox")
+
                 else:
                     speakText("Can you repeat ?")
                     continue
 
-            elif (isResponse2(readOrSend)):
+            elif (isResponseSend(readOrSend)):
                 speakText("What is the subject ofthe mail?")
-                subject = input()
+                subject = listen()
                 speakText("What is the body of the email")
-                body = input()
+                body = listen()
                 speakText("What is recievers's  mai id")
-                mailID = input()
+                mailID = listen()
                 try:
                     service = build('gmail', 'v1', credentials=creds)
                     message = EmailMessage()
@@ -198,6 +186,7 @@ while (1):
                 print("Sorry can you repeat yourself?")
                 break
 
-    except:
+    except Exception as e:
+        print(e)
         print("Something went wrong !!")
         break
