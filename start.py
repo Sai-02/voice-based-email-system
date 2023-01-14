@@ -12,7 +12,8 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from test import speakText, listen
 import speech_recognition as sr
-from quickStart import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext
+from Services import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext
+from tokenGenerator import loginToGmail
 import pyttsx3
 from readmail import readmail
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -22,6 +23,8 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           "https://www.googleapis.com/auth/gmail.send"]
 if os.path.exists('token.json'):
     creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+# else:
+
 # If there are no (valid) credentials available, let the user log in.
 if not creds or not creds.valid:
     if creds and creds.expired and creds.refresh_token:
@@ -33,6 +36,7 @@ if not creds or not creds.valid:
     # Save the credentials for the next run
     with open('token.json', 'w') as token:
         token.write(creds.to_json())
+
 while (1):
     try:
         speakText("What do you want to do")

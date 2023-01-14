@@ -1,7 +1,7 @@
 from __future__ import print_function
 import re
 from bs4 import BeautifulSoup
-from quickStart import decodeMailBody,  message_full_recursion, message_full_recursion_html
+from Services import decodeMailBody,  message_full_recursion, message_full_recursion_html
 import demoji
 
 
