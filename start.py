@@ -1,6 +1,5 @@
 from __future__ import print_function
 from email.message import EmailMessage
-import json
 import constant
 import base64
 import os.path
