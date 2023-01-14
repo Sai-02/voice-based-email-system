@@ -14,3 +14,6 @@ scipy==1.9.1
 six==1.16.0
 sklearn==0.0
 threadpoolctl==3.1.0
+SpeechRecognition==3.9.0
+pyttsx3==2.90
+demoji==1.1.0
