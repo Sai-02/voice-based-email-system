@@ -32,26 +32,6 @@ def main():
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
 
-    try:
-        # Call the Gmail API
-        service = build('gmail', 'v1', credentials=creds)
-        inbox = getAllMails(service)
-        if (inbox):
-            mes1 = inbox['messages'][0]['id']
-            mescontent = service.users().messages().get(userId='me', id=mes1).execute()
-            encodedMail = mescontent['payload']['parts'][0]['body']['data']
-            base64_message = encodedMail.replace("-", "+")
-            base64_message = base64_message.replace("_", "/")
-            message = base64.b64decode(base64_message)
-            print(message)
-
-        else:
-            print("Error occured while decoding message")
-
-    except HttpError as error:
-        # TODO(developer) - Handle errors from gmail API.
-        print(f'An error occurred: {error}')
-
 
 if __name__ == '__main__':
     main()

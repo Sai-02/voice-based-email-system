@@ -15,7 +15,7 @@ import speech_recognition as sr
 from Services import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext
 from tokenGenerator import loginToGmail
 import pyttsx3
-from readmail import readmail
+from readMailUtilities import readmail
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           "https://mail.google.com/",
           "https://www.googleapis.com/auth/gmail.modify",
