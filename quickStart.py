@@ -8,6 +8,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from bs4 import BeautifulSoup
 from googleapiclient.errors import HttpError
+import speech_recognition as sr
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -135,3 +136,18 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def listen():
+    r = sr.Recognizer()
+    print(sr.Microphone.list_microphone_names())
+    with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source, duration=1)
+        # r.energy_threshold()
+        audio = r.listen(source)
+        try:
+            text = r.recognize_google(audio)
+            return text
+        except:
+            print("sorry, could not recognise")
+            listen()
