@@ -9,7 +9,7 @@ import re
 from bs4 import BeautifulSoup
 from googleapiclient.errors import HttpError
 from constant import SCOPES
-from Services import getAllMails
+from Utilities import getAllMails
 def main():
     """Shows basic usage of the Gmail API.
     Lists the user's Gmail labels.

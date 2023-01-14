@@ -13,7 +13,6 @@ from googleapiclient.errors import HttpError
 from test import speakText, listen
 import speech_recognition as sr
 from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext
-from tokenGenerator import loginToGmail
 import pyttsx3
 from readMailUtilities import readmail
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',

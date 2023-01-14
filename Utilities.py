@@ -41,7 +41,7 @@ def isResponseSend(resp):
 
 
 def isResponseUnread(resp):
-    for x in ["unread", "un read", "un red", "umread", "100", "hundred"]:
+    for x in ["unread", "un read", "un red", "umread", "100", "hundred", "Android"]:
         if (resp and resp.lower().find(x) != -1):
             return 1
     return 0
