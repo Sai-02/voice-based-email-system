@@ -32,9 +32,9 @@ def readmail(data):
 
 
 def replaceEmojiCharacter(content):
-    bus = demoji.findall(content)
-    for item in bus.keys():
-        content = content.replace(item, bus[item] + ' emoji')
+    emojiList = demoji.findall(content)
+    for item in emojiList.keys():
+        content = content.replace(item, emojiList[item] + ' emoji')
     return content
 
 
