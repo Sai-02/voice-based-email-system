@@ -145,7 +145,49 @@ while (1):
                             print(e)
 
                 elif (isResponseFullInbox(readMailType)):
-                    print("full inbox")
+                    speakText("Reading out latest mails: ")
+                    service = build('gmail', 'v1', credentials=creds)
+                    inbox = getLastTenMails(
+                        service, constant.GET_FULL_INBOX)
+                    for i in range(10):
+                        dictionary = getMessageFromMessageID(
+                            service, inbox[i]["id"])
+                        # print("                                      ")
+                        # print("This was your "+str(i+1)+" mail")
+                        # speakText("Now next mail is        ")
+                        try:
+                            # जय श्री राम
+                            senderDetails = [sub['value'] for sub in dictionary['payload']
+                                             ['headers'] if sub['name'] == constant.FROM][0]
+                            subject = [sub['value'] for sub in dictionary['payload']
+                                       ['headers'] if sub['name'] == constant.SUBJECT][0]
+                            senderarr = senderDetails.split(' ')
+                            senderarrlen = len(senderarr)
+                            senderEmail = senderarr[senderarrlen - 1]
+                            # Removing "<" & ">" from email
+                            senderEmail = re.sub("\<", " ", senderEmail)
+                            senderEmail = re.sub("\>", " ", senderEmail)
+                            senderName = " ".join(
+                                senderarr[0: (senderarrlen - 1)])
+                            speakText(senderName + " says " + subject)
+                            speakText("1 Read email")
+                            speakText("2 Next mail")
+                            speakText("3 Go back")
+                            shouldReadNext = listen()
+                            if (isResponseRead(shouldReadNext)):
+                                speakText("Here is the mail: ")
+                                mailBody = readmail(dictionary)
+                                speakText(mailBody)
+                                speakText("                       ")
+                                speakText("Over")
+                                continue
+                            if (isResponseNext(shouldReadNext)):
+                                continue
+                            else:
+                                break
+
+                        except Exception as e:
+                            print(e)
 
                 else:
                     speakText("Can you repeat ?")
@@ -164,7 +206,7 @@ while (1):
 
                     message.set_content(body)
 
-                    message['To'] = mailID.replace(" ","")
+                    message['To'] = mailID.replace(" ", "")
                     print(message['To'])
                     message['From'] = 'neeraj.sati123@gmail.com'
                     message['Subject'] = subject
