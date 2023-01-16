@@ -13,15 +13,17 @@ def readmail(data):
             content = message_full_recursion(data["payload"]["parts"])
             if (content == ""):
                 content = message_full_recursion_html(data['payload']["parts"])
-            if(content == ""):
+            if (content == ""):
                 content = data['payload']["body"]["data"]
         else:
             content = data['payload']["body"]["data"]
-            
+
     except:
         print("Unexpected error")
     content = decodeMailBody(content)
+    content = content.replace('\\r', '')
     content = content.replace('\r', '')
+    content = content.replace('\\n', '')
     content = content.replace('\n', '')
     content = re.sub(' +', ' ', content)
     content = replaceEmojiCharacter(content)
