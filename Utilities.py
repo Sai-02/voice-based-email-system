@@ -56,14 +56,20 @@ def isResponseStarred(resp):
 
 def isResponseFullInbox(resp):
     for x in ["full", "inbox", "in box", "fool", "box"]:
-        if (resp and resp.find(x) != -1):
+        if (resp and resp.lower().find(x) != -1):
             return 1
     return 0
 
 
 def isResponseNext(resp):
     for x in ["next", "ext", "text", "test", "axe", "ex", "nest"]:
-        if (resp and resp.find(x) != -1):
+        if (resp and resp.lower().find(x) != -1):
+            return 1
+    return 0
+
+def isResponseSearchByName(resp):
+    for x in ["name", "nem", "nam", "by", "buy", "search"]:
+        if (resp and resp.lower().find(x) != -1):
             return 1
     return 0
 

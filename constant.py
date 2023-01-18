@@ -6,6 +6,7 @@ FROM="From"
 GET_PRIMARY = "category:primary is:unread"
 GET_STARRED = "category:primary is:starred"
 GET_FULL_INBOX = 'category:primary'
+SEARCH_MAIL_BY_NAME = 'from:'
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           "https://mail.google.com/",
           "https://www.googleapis.com/auth/gmail.modify",

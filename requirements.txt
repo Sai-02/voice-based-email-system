@@ -17,3 +17,4 @@ threadpoolctl==3.1.0
 SpeechRecognition==3.9.0
 pyttsx3==2.90
 demoji==1.1.0
+keras==2.11.0
