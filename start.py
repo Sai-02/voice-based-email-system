@@ -247,11 +247,13 @@ while (1):
                 create_message = {
                     'raw': encoded_message
                 }
-                # send_message = (service.users().messages().send
-                #                 (userId="me", body=create_message).execute())
+                send_message = (service.users().messages().send
+                                (userId="me", body=create_message).execute())
                 print(F'Message Id: {send_message["id"]}')
+                speakText("Mail Sent!!")
             except HttpError as error:
                 print(F'An error occurred: {error}')
+                speakText("Receiver's Email Id Incorrect!")
                 send_message = None
         else:
             # speakText("Sorry can you repeat yourself?")
