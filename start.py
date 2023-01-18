@@ -239,7 +239,6 @@ while (1):
                 message.set_content(body)
                 message['To'] = mailID.replace(" ", "").lower()
                 print(message['To'])
-                message['From'] = 'neeraj.sati123@gmail.com'
                 message['Subject'] = subject
                 # encoded message
                 encoded_message = base64.urlsafe_b64encode(message.as_bytes()) \
