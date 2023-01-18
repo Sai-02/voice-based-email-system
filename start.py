@@ -38,8 +38,8 @@ if not creds or not creds.valid:
 while (1):
     try:
         speakText("What do you want to do")
-        speakText(" 1. Read Emails ")
-        speakText(" 2. Send  Email ")
+        speakText(" Read Emails ")
+        speakText(" Send  Email ")
         # r.adjust_for_ambient_noise(source2, duration=0.2)
         # readOrSendAudio = r.listen(source2)
         # readOrSend = r.recognize_google(readOrSendAudio, language='en-IN')
@@ -47,10 +47,10 @@ while (1):
         if (isResponseRead(readOrSend)):
             speakText("Okay so you want to read your emails")
             speakText("Please specify what mails do you want to read?")
-            speakText("1 Unread mails")
-            speakText("2 Starred mails")
-            speakText("3 Full inbox")
-            speakText("4 Search mails by name")
+            speakText("Unread mails")
+            speakText("Starred mails")
+            speakText("Full inbox")
+            speakText("Search mails by name")
             readMailType = listen()
             if (isResponseUnread(readMailType)):
                 speakText("Reading out latest unread mails: ")
@@ -77,9 +77,9 @@ while (1):
                         senderName = " ".join(
                             senderarr[0: (senderarrlen - 1)])
                         speakText(senderName + " says " + subject)
-                        speakText("1 Read email")
-                        speakText("2 Next mail")
-                        speakText("3 Go back")
+                        speakText("Read email")
+                        speakText("Next mail")
+                        speakText("Go back")
                         shouldReadNext = listen()
                         if (isResponseRead(shouldReadNext)):
                             speakText("Here is the mail: ")
@@ -119,9 +119,9 @@ while (1):
                         senderName = " ".join(
                             senderarr[0: (senderarrlen - 1)])
                         speakText(senderName + " says " + subject)
-                        speakText("1 Read email")
-                        speakText("2 Next mail")
-                        speakText("3 Go back")
+                        speakText("Read email")
+                        speakText("Next mail")
+                        speakText("Go back")
                         shouldReadNext = listen()
                         if (isResponseRead(shouldReadNext)):
                             speakText("Here is the mail: ")
@@ -161,9 +161,9 @@ while (1):
                         senderName = " ".join(
                             senderarr[0: (senderarrlen - 1)])
                         speakText(senderName + " says " + subject)
-                        speakText("1 Read email")
-                        speakText("2 Next mail")
-                        speakText("3 Go back")
+                        speakText("Read email")
+                        speakText("Next mail")
+                        speakText("Go back")
                         shouldReadNext = listen()
                         if (isResponseRead(shouldReadNext)):
                             speakText("Here is the mail: ")
@@ -178,13 +178,14 @@ while (1):
                             break
                     except Exception as e:
                         print(e)
-            
+
             elif (isResponseSearchByName(readMailType)):
                 speakText("What name should I search for?")
                 searchName = listen()
                 speakText("Reading out latest mails by: "+searchName)
                 service = build('gmail', 'v1', credentials=creds)
-                inbox = getLastTenMails(service, constant.SEARCH_MAIL_BY_NAME + searchName);
+                inbox = getLastTenMails(
+                    service, constant.SEARCH_MAIL_BY_NAME + searchName)
                 for i in range(10):
                     dictionary = getMessageFromMessageID(
                         service, inbox[i]["id"])
@@ -205,9 +206,9 @@ while (1):
                         senderName = " ".join(
                             senderarr[0: (senderarrlen - 1)])
                         speakText(senderName + " says " + subject)
-                        speakText("1 Read email")
-                        speakText("2 Next mail")
-                        speakText("3 Go back")
+                        speakText("Read email")
+                        speakText("Next mail")
+                        speakText("Go back")
                         shouldReadNext = listen()
                         if (isResponseRead(shouldReadNext)):
                             speakText("Here is the mail: ")
@@ -226,7 +227,7 @@ while (1):
                 speakText("Can you repeat ?")
                 continue
         elif (isResponseSend(readOrSend)):
-            speakText("What is the subject ofthe mail?")
+            speakText("What is the subject of the mail?")
             subject = listen()
             speakText("What is the body of the email")
             body = listen()
