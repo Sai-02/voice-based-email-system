@@ -19,22 +19,31 @@ import speech_recognition as sr
 st.title(f"Welcome to VABES: Voice Based Emailing")
 start_app = st.button("Start Application", key='start_app')
 
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-# def transcribe_speech():
-#     r = sr.Recognizer()
-#     with sr.Microphone() as source:
-#         r.adjust_for_ambient_noise(source)
-#         with st.spinner("Listening..."):
-#             audio = r.listen(source)
-#             st.write("Transcribing...")
-#             try:
-#                 text = r.recognize_google(audio)
-#                 return text
-#             except sr.UnknownValueError:
-#                 st.write("Could not understand audio")
-#             except sr.RequestError as e:
-#                 st.write(
-#                     "Could not request results from Google Speech Recognition service; {0}".format(e))
+
+def transcribe_speech():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source)
+        with st.spinner("Listening..."):
+            audio = r.listen(source)
+            st.write("Transcribing...")
+            try:
+                text = r.recognize_google(audio)
+                return text
+            except sr.UnknownValueError:
+                st.write("Could not understand audio")
+            except sr.RequestError as e:
+                st.write(
+                    "Could not request results from Google Speech Recognition service; {0}".format(e))
+
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           "https://mail.google.com/",
@@ -57,27 +66,33 @@ if not creds or not creds.valid:
     with open('token.json', 'w') as token:
         token.write(creds.to_json())
 
+
+def speakAndWrite(val):
+    st.write(val)
+    speakText(val)
+
+
 if start_app:
-    text = "check"
     while (1):
         try:
-            speakText("What do you want to do")
-            speakText(" Read Emails ")
-            speakText(" Send  Email ")
-            # r.adjust_for_ambient_noise(source2, duration=0.2)
-            # readOrSendAudio = r.listen(source2)
-            # readOrSend = r.recognize_google(readOrSendAudio, language='en-IN')
-            readOrSend = listen()
+            speakAndWrite("What do you want to do")
+            speakAndWrite(" Read Emails ")
+            speakAndWrite(" Send  Email ")
+            try:
+
+                readOrSend = transcribe_speech()
+            except Exception as e:
+                print(e)
             if (isResponseRead(readOrSend)):
-                speakText("Okay so you want to read your emails")
-                speakText("Please specify what mails do you want to read?")
-                speakText("Unread mails")
-                speakText("Starred mails")
-                speakText("Full inbox")
-                speakText("Search mails by name")
-                readMailType = listen()
+                speakAndWrite("Okay so you want to read your emails")
+                speakAndWrite("Please specify what mails do you want to read?")
+                speakAndWrite("Unread mails")
+                speakAndWrite("Starred mails")
+                speakAndWrite("Full inbox")
+                speakAndWrite("Search mails by name")
+                readMailType = transcribe_speech()
                 if (isResponseUnread(readMailType)):
-                    speakText("Reading out latest unread mails: ")
+                    speakAndWrite("Reading out latest unread mails: ")
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenMails(service, constant.GET_PRIMARY)
                     for i in range(10):
@@ -85,7 +100,7 @@ if start_app:
                             service, inbox[i]["id"])
                         # print("                                      ")
                         # print("This was your "+str(i+1)+" mail")
-                        # speakText("Now next mail is        ")
+                        # speakAndWrite("Now next mail is        ")
                         try:
                             # जय श्री राम
                             senderDetails = [sub['value'] for sub in dictionary['payload']
@@ -100,17 +115,17 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
-                            speakText(senderName + " says " + subject)
-                            speakText("Read email")
-                            speakText("Next mail")
-                            speakText("Go back")
-                            shouldReadNext = listen()
+                            speakAndWrite(senderName + " says " + subject)
+                            speakAndWrite("Read email")
+                            speakAndWrite("Next mail")
+                            speakAndWrite("Go back")
+                            shouldReadNext = transcribe_speech()
                             if (isResponseRead(shouldReadNext)):
-                                speakText("Here is the mail: ")
+                                speakAndWrite("Here is the mail: ")
                                 mailBody = readmail(dictionary)
-                                speakText(mailBody)
-                                speakText("                       ")
-                                speakText("Over")
+                                speakAndWrite(mailBody)
+                                speakAndWrite("                       ")
+                                speakAndWrite("Over")
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue
@@ -119,7 +134,7 @@ if start_app:
                         except Exception as e:
                             print(e)
                 elif (isResponseStarred(readMailType)):
-                    speakText("Reading out latest Starred mails: ")
+                    speakAndWrite("Reading out latest Starred mails: ")
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenMails(
                         service, constant.GET_STARRED)
@@ -128,7 +143,7 @@ if start_app:
                             service, inbox[i]["id"])
                         # print("                                      ")
                         # print("This was your "+str(i+1)+" mail")
-                        # speakText("Now next mail is        ")
+                        # speakAndWrite("Now next mail is        ")
                         try:
                             senderDetails = [sub['value'] for sub in dictionary['payload']
                                              ['headers'] if sub['name'] == constant.FROM][0]
@@ -142,17 +157,17 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
-                            speakText(senderName + " says " + subject)
-                            speakText("Read email")
-                            speakText("Next mail")
-                            speakText("Go back")
-                            shouldReadNext = listen()
+                            speakAndWrite(senderName + " says " + subject)
+                            speakAndWrite("Read email")
+                            speakAndWrite("Next mail")
+                            speakAndWrite("Go back")
+                            shouldReadNext = transcribe_speech()
                             if (isResponseRead(shouldReadNext)):
-                                speakText("Here is the mail: ")
+                                speakAndWrite("Here is the mail: ")
                                 mailBody = readmail(dictionary)
-                                speakText(mailBody)
-                                speakText("                       ")
-                                speakText("Over")
+                                speakAndWrite(mailBody)
+                                speakAndWrite("                       ")
+                                speakAndWrite("Over")
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue
@@ -161,7 +176,7 @@ if start_app:
                         except Exception as e:
                             print(e)
                 elif (isResponseFullInbox(readMailType)):
-                    speakText("Reading out latest mails: ")
+                    speakAndWrite("Reading out latest mails: ")
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenMails(
                         service, constant.GET_FULL_INBOX)
@@ -170,7 +185,7 @@ if start_app:
                             service, inbox[i]["id"])
                         # print("                                      ")
                         # print("This was your "+str(i+1)+" mail")
-                        # speakText("Now next mail is        ")
+                        # speakAndWrite("Now next mail is        ")
                         try:
                             senderDetails = [sub['value'] for sub in dictionary['payload']
                                              ['headers'] if sub['name'] == constant.FROM][0]
@@ -184,17 +199,17 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
-                            speakText(senderName + " says " + subject)
-                            speakText("Read email")
-                            speakText("Next mail")
-                            speakText("Go back")
-                            shouldReadNext = listen()
+                            speakAndWrite(senderName + " says " + subject)
+                            speakAndWrite("Read email")
+                            speakAndWrite("Next mail")
+                            speakAndWrite("Go back")
+                            shouldReadNext = transcribe_speech()
                             if (isResponseRead(shouldReadNext)):
-                                speakText("Here is the mail: ")
+                                speakAndWrite("Here is the mail: ")
                                 mailBody = readmail(dictionary)
-                                speakText(mailBody)
-                                speakText("                       ")
-                                speakText("Over")
+                                speakAndWrite(mailBody)
+                                speakAndWrite("                       ")
+                                speakAndWrite("Over")
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue
@@ -204,9 +219,9 @@ if start_app:
                             print(e)
 
                 elif (isResponseSearchByName(readMailType)):
-                    speakText("What name should I search for?")
-                    searchName = listen()
-                    speakText("Reading out latest mails by: "+searchName)
+                    speakAndWrite("What name should I search for?")
+                    searchName = transcribe_speech()
+                    speakAndWrite("Reading out latest mails by: "+searchName)
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenMails(
                         service, constant.SEARCH_MAIL_BY_NAME + searchName)
@@ -215,7 +230,7 @@ if start_app:
                             service, inbox[i]["id"])
                         # print("                                      ")
                         # print("This was your "+str(i+1)+" mail")
-                        # speakText("Now next mail is        ")
+                        # speakAndWrite("Now next mail is        ")
                         try:
                             senderDetails = [sub['value'] for sub in dictionary['payload']
                                              ['headers'] if sub['name'] == constant.FROM][0]
@@ -229,17 +244,17 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
-                            speakText(senderName + " says " + subject)
-                            speakText("Read email")
-                            speakText("Next mail")
-                            speakText("Go back")
-                            shouldReadNext = listen()
+                            speakAndWrite(senderName + " says " + subject)
+                            speakAndWrite("Read email")
+                            speakAndWrite("Next mail")
+                            speakAndWrite("Go back")
+                            shouldReadNext = transcribe_speech()
                             if (isResponseRead(shouldReadNext)):
-                                speakText("Here is the mail: ")
+                                speakAndWrite("Here is the mail: ")
                                 mailBody = readmail(dictionary)
-                                speakText(mailBody)
-                                speakText("                       ")
-                                speakText("Over")
+                                speakAndWrite(mailBody)
+                                speakAndWrite("                       ")
+                                speakAndWrite("Over")
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue
@@ -248,15 +263,15 @@ if start_app:
                         except Exception as e:
                             print(e)
                 else:
-                    speakText("Can you repeat ?")
+                    speakAndWrite("Can you repeat ?")
                     continue
             elif (isResponseSend(readOrSend)):
-                speakText("What is the subject of the mail?")
-                subject = listen()
-                speakText("What is the body of the email")
-                body = listen()
-                speakText("What is recievers's  mail id")
-                mailID = listen()
+                speakAndWrite("What is the subject of the mail?")
+                subject = transcribe_speech()
+                speakAndWrite("What is the body of the email")
+                body = transcribe_speech()
+                speakAndWrite("What is recievers's  mail id")
+                mailID = transcribe_speech()
                 try:
                     service = build('gmail', 'v1', credentials=creds)
                     message = EmailMessage()
@@ -273,13 +288,13 @@ if start_app:
                     send_message = (service.users().messages().send
                                     (userId="me", body=create_message).execute())
                     print(F'Message Id: {send_message["id"]}')
-                    speakText("Mail Sent!!")
+                    speakAndWrite("Mail Sent!!")
                 except HttpError as error:
                     print(F'An error occurred: {error}')
-                    speakText("Receiver's Email Id Incorrect!")
+                    speakAndWrite("Receiver's Email Id Incorrect!")
                     send_message = None
             else:
-                # speakText("Sorry can you repeat yourself?")
+                # speakAndWrite("Sorry can you repeat yourself?")
                 print("Sorry can you repeat yourself?")
                 continue
 
@@ -287,14 +302,3 @@ if start_app:
             print(e)
             print("Something went wrong !!")
             break
-
-    if text:
-        st.write(f"You said: {text}")
-
-hide_streamlit_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
