@@ -1,5 +1,6 @@
 from __future__ import print_function
 import streamlit as st
+import streamlit.components.v1 as components
 from readMailUtilities import readmail
 import pyttsx3
 from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName
@@ -22,6 +23,7 @@ hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
+            *{margin:0;padding:0;box-sizing:border-box}
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
@@ -74,9 +76,11 @@ def speakAndWrite(val):
 if start_app:
     while (1):
         try:
-            speakAndWrite("What do you want to do")
-            speakAndWrite(" Read Emails ")
-            speakAndWrite(" Send  Email ")
+            st.text("What do you want to do\n Read Emails \n Send Email")
+            speakText("What do you want to do")
+            speakText(" Read Emails ")
+            speakText(" Send  Email ")
+
             try:
 
                 readOrSend = transcribe_speech()
