@@ -15,7 +15,6 @@ import base64
 import constant
 from email.message import EmailMessage
 import speech_recognition as sr
-
 st.title(f"Welcome to VABES: Voice Based Emailing")
 start_app = st.button("Start Application", key='start_app')
 
