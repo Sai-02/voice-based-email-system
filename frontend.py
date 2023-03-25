@@ -39,6 +39,7 @@ def transcribe_speech():
             st.write("Transcribing...")
             try:
                 text = r.recognize_google(audio)
+                st.markdown("You said: **:green["+text+"]**")
                 return text
             except sr.UnknownValueError:
                 st.write("Could not understand audio")
@@ -121,8 +122,9 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
-                            
-                            st.text(senderName + " says " + subject + "\n1. Read Emails \n2. Next Emails \n3.Go back")
+
+                            st.text(senderName + " says " + subject +
+                                    "\n1. Read Emails \n2. Next Emails \n3.Go back")
                             speakAndWrite(senderName + " says " + subject)
                             speakAndWrite("Read email")
                             speakAndWrite("Next mail")
@@ -213,7 +215,8 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
-                            st.text(senderName + " says " + subject + "\n1. Read Email \n2. Next Email \n3.Go back")
+                            st.text(senderName + " says " + subject +
+                                    "\n1. Read Email \n2. Next Email \n3.Go back")
                             speakAndWrite(senderName + " says " + subject)
                             speakAndWrite("Read email")
                             speakAndWrite("Next mail")
@@ -237,7 +240,7 @@ if start_app:
                 elif (isResponseSearchByName(readMailType)):
                     st.text("What name should I search for?")
                     speakAndWrite("What name should I search for?")
-                    searchName = transcribe_speech();
+                    searchName = transcribe_speech()
                     st.text("Reading out latest mails by: "+searchName)
                     speakAndWrite("Reading out latest mails by: "+searchName)
                     service = build('gmail', 'v1', credentials=creds)
@@ -262,7 +265,8 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
-                            st.text(senderName + " says " + subject + "\n1. Read Email \n2. Next Email \n3.Go back")
+                            st.text(senderName + " says " + subject +
+                                    "\n1. Read Email \n2. Next Email \n3.Go back")
                             speakAndWrite(senderName + " says " + subject)
                             speakAndWrite("Read email")
                             speakAndWrite("Next mail")
