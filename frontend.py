@@ -290,14 +290,14 @@ if start_app:
                     speakAndWrite("Can you repeat ?")
                     continue
             elif (isResponseSend(readOrSend)):
-                st.text("What is the subject of the mail?")
+                st.markdown("**:blue[What is the subject of the mail?]**")
                 speakAndWrite("What is the subject of the mail?")
                 subject = transcribe_speech()
-                st.text("What is the body of the email")
+                st.markdown("**:blue[What is the body of the email?]**")
                 speakAndWrite("What is the body of the email")
                 body = transcribe_speech()
-                st.text("What is recievers's  mail id")
-                speakAndWrite("What is recievers's  mail id")
+                st.markdown("**:blue[What is receivers's mail id?]**")
+                speakAndWrite("What is receivers's  mail id")
                 mailID = transcribe_speech()
                 try:
                     service = build('gmail', 'v1', credentials=creds)
