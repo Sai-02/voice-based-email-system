@@ -23,6 +23,7 @@ hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
+            .css-14xtw13{opacity: 0 !important;}
             *{margin:0;padding:0;box-sizing:border-box}
             </style>
             """
@@ -69,14 +70,14 @@ if not creds or not creds.valid:
 
 
 def speakAndWrite(val):
-    st.write(val)
+    # st.write(val)
     speakText(val)
 
 
 if start_app:
     while (1):
         try:
-            st.text("What do you want to do\n Read Emails \n Send Email")
+            st.text("What do you want to do\n1. Read Emails \n2. Send Email")
             speakText("What do you want to do")
             speakText(" Read Emails ")
             speakText(" Send  Email ")
@@ -87,6 +88,7 @@ if start_app:
             except Exception as e:
                 print(e)
             if (isResponseRead(readOrSend)):
+                st.text("Okay so you want to read your emails \nPlease specify what mails do you want to read? \n1. Unread mails \n2. Starred mails \n3. Full Inbox \n4. Search mails by name")
                 speakAndWrite("Okay so you want to read your emails")
                 speakAndWrite("Please specify what mails do you want to read?")
                 speakAndWrite("Unread mails")
@@ -95,6 +97,7 @@ if start_app:
                 speakAndWrite("Search mails by name")
                 readMailType = transcribe_speech()
                 if (isResponseUnread(readMailType)):
+                    st.text("Reading out latest unread mails: ")
                     speakAndWrite("Reading out latest unread mails: ")
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenMails(service, constant.GET_PRIMARY)
@@ -118,6 +121,8 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
+                            
+                            st.text(senderName + " says " + subject + "\n1. Read Emails \n2. Next Emails \n3.Go back")
                             speakAndWrite(senderName + " says " + subject)
                             speakAndWrite("Read email")
                             speakAndWrite("Next mail")
@@ -126,6 +131,7 @@ if start_app:
                             if (isResponseRead(shouldReadNext)):
                                 speakAndWrite("Here is the mail: ")
                                 mailBody = readmail(dictionary)
+                                st.text("Here is the mail: \n"+mailBody)
                                 speakAndWrite(mailBody)
                                 speakAndWrite("                       ")
                                 speakAndWrite("Over")
@@ -137,6 +143,7 @@ if start_app:
                         except Exception as e:
                             print(e)
                 elif (isResponseStarred(readMailType)):
+                    st.text("Reading out latest Starred mails: ")
                     speakAndWrite("Reading out latest Starred mails: ")
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenMails(
@@ -160,7 +167,9 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
+                            st.text(senderName + " says " + subject)
                             speakAndWrite(senderName + " says " + subject)
+                            st.text("1. Read email \n2. Next mail \n3. Go back")
                             speakAndWrite("Read email")
                             speakAndWrite("Next mail")
                             speakAndWrite("Go back")
@@ -168,6 +177,7 @@ if start_app:
                             if (isResponseRead(shouldReadNext)):
                                 speakAndWrite("Here is the mail: ")
                                 mailBody = readmail(dictionary)
+                                st.text("Here is the mail: \n"+mailBody)
                                 speakAndWrite(mailBody)
                                 speakAndWrite("                       ")
                                 speakAndWrite("Over")
@@ -179,6 +189,7 @@ if start_app:
                         except Exception as e:
                             print(e)
                 elif (isResponseFullInbox(readMailType)):
+                    st.text("Reading out latest mails: ")
                     speakAndWrite("Reading out latest mails: ")
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenMails(
@@ -202,6 +213,7 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
+                            st.text(senderName + " says " + subject + "\n1. Read Email \n2. Next Email \n3.Go back")
                             speakAndWrite(senderName + " says " + subject)
                             speakAndWrite("Read email")
                             speakAndWrite("Next mail")
@@ -210,6 +222,7 @@ if start_app:
                             if (isResponseRead(shouldReadNext)):
                                 speakAndWrite("Here is the mail: ")
                                 mailBody = readmail(dictionary)
+                                st.text("Here is the mail: \n"+mailBody)
                                 speakAndWrite(mailBody)
                                 speakAndWrite("                       ")
                                 speakAndWrite("Over")
@@ -222,8 +235,10 @@ if start_app:
                             print(e)
 
                 elif (isResponseSearchByName(readMailType)):
+                    st.text("What name should I search for?")
                     speakAndWrite("What name should I search for?")
-                    searchName = transcribe_speech()
+                    searchName = transcribe_speech();
+                    st.text("Reading out latest mails by: "+searchName)
                     speakAndWrite("Reading out latest mails by: "+searchName)
                     service = build('gmail', 'v1', credentials=creds)
                     inbox = getLastTenMails(
@@ -247,6 +262,7 @@ if start_app:
                             senderEmail = re.sub("\>", " ", senderEmail)
                             senderName = " ".join(
                                 senderarr[0: (senderarrlen - 1)])
+                            st.text(senderName + " says " + subject + "\n1. Read Email \n2. Next Email \n3.Go back")
                             speakAndWrite(senderName + " says " + subject)
                             speakAndWrite("Read email")
                             speakAndWrite("Next mail")
@@ -255,6 +271,7 @@ if start_app:
                             if (isResponseRead(shouldReadNext)):
                                 speakAndWrite("Here is the mail: ")
                                 mailBody = readmail(dictionary)
+                                st.text("Here is the mail: \n"+mailBody)
                                 speakAndWrite(mailBody)
                                 speakAndWrite("                       ")
                                 speakAndWrite("Over")
@@ -269,10 +286,13 @@ if start_app:
                     speakAndWrite("Can you repeat ?")
                     continue
             elif (isResponseSend(readOrSend)):
+                st.text("What is the subject of the mail?")
                 speakAndWrite("What is the subject of the mail?")
                 subject = transcribe_speech()
+                st.text("What is the body of the email")
                 speakAndWrite("What is the body of the email")
                 body = transcribe_speech()
+                st.text("What is recievers's  mail id")
                 speakAndWrite("What is recievers's  mail id")
                 mailID = transcribe_speech()
                 try:
@@ -291,17 +311,21 @@ if start_app:
                     send_message = (service.users().messages().send
                                     (userId="me", body=create_message).execute())
                     print(F'Message Id: {send_message["id"]}')
+                    st.text("Mail Sent!!")
                     speakAndWrite("Mail Sent!!")
                 except HttpError as error:
                     print(F'An error occurred: {error}')
+                    st.text("Receiver's Email Id Incorrect!")
                     speakAndWrite("Receiver's Email Id Incorrect!")
                     send_message = None
             else:
                 # speakAndWrite("Sorry can you repeat yourself?")
+                st.text("Sorry can you repeat yourself?")
                 print("Sorry can you repeat yourself?")
                 continue
 
         except Exception as e:
             print(e)
-            print("Something went wrong !!")
+            st.text("Something went wrong !")
+            print("Something went wrong !")
             break
