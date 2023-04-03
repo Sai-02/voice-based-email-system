@@ -22,6 +22,7 @@ start_app = st.button("Start Application", key='start_app')
 
 hide_streamlit_style = """
             <style>
+            *{white-space:initial !important;}
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
             .css-14xtw13{opacity: 0 !important;}
@@ -29,8 +30,6 @@ hide_streamlit_style = """
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-
 
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -53,7 +52,6 @@ if not creds or not creds.valid:
     # Save the credentials for the next run
     with open('token.json', 'w') as token:
         token.write(creds.to_json())
-
 
 def speakAndWrite(val):
     # st.write(val)
