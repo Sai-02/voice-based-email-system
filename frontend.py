@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 from readMailUtilities import readmail
 import pyttsx3
 from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName
-from test import speakText, listen,transcribe_speech
+from test import speakText, listen, transcribe_speech
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -52,6 +52,7 @@ if not creds or not creds.valid:
     # Save the credentials for the next run
     with open('token.json', 'w') as token:
         token.write(creds.to_json())
+
 
 def speakAndWrite(val):
     # st.write(val)
@@ -168,6 +169,8 @@ if start_app:
                                 speakAndWrite(mailBody)
                                 speakAndWrite("                       ")
                                 speakAndWrite("Over")
+                                handleAttachments(
+                                    dictionary, service, inbox[i]["id"])
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue
@@ -214,6 +217,8 @@ if start_app:
                                 speakAndWrite(mailBody)
                                 speakAndWrite("                       ")
                                 speakAndWrite("Over")
+                                handleAttachments(
+                                    dictionary, service, inbox[i]["id"])
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue
@@ -264,6 +269,8 @@ if start_app:
                                 speakAndWrite(mailBody)
                                 speakAndWrite("                       ")
                                 speakAndWrite("Over")
+                                handleAttachments(
+                                    dictionary, service, inbox[i]["id"])
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue
