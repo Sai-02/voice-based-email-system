@@ -4,6 +4,7 @@ import speech_recognition as sr
 from constant import SCOPES, getStarred, getUnread
 # If modifying these scopes, delete the file token.json.
 
+
 def getAllMails(service):
     inbox = service.users().messages().list(userId='me').execute()
     return inbox
@@ -67,8 +68,16 @@ def isResponseNext(resp):
             return 1
     return 0
 
+
 def isResponseSearchByName(resp):
     for x in ["name", "nem", "nam", "by", "buy", "search"]:
+        if (resp and resp.lower().find(x) != -1):
+            return 1
+    return 0
+
+
+def isResponseYes(resp):
+    for x in ["Yes", "S", "yeah", "ya", "yo", "yess", "es"]:
         if (resp and resp.lower().find(x) != -1):
             return 1
     return 0
@@ -120,6 +129,7 @@ def message_full_recursion_html(m):
         return ""
     except:
         return ""
+
 
 def listen():
     r = sr.Recognizer()

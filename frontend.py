@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 from readMailUtilities import readmail
 import pyttsx3
 from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName
-from test import speakText, listen
+from test import speakText, listen,transcribe_speech
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -16,6 +16,7 @@ import base64
 import constant
 from email.message import EmailMessage
 import speech_recognition as sr
+from AttachmentUtilites import handleAttachments
 st.title(f"Welcome to VABES: Voice Based Emailing")
 start_app = st.button("Start Application", key='start_app')
 
@@ -30,22 +31,6 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
-def transcribe_speech():
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        r.adjust_for_ambient_noise(source)
-        with st.spinner("Listening..."):
-            audio = r.listen(source)
-            st.write("Transcribing...")
-            try:
-                text = r.recognize_google(audio)
-                st.markdown("You said: **:green["+text+"]**")
-                return text
-            except sr.UnknownValueError:
-                st.write("Could not understand audio")
-            except sr.RequestError as e:
-                st.write(
-                    "Could not request results from Google Speech Recognition service; {0}".format(e))
 
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -137,6 +122,8 @@ if start_app:
                                 speakAndWrite(mailBody)
                                 speakAndWrite("                       ")
                                 speakAndWrite("Over")
+                                handleAttachments(
+                                    dictionary, service, inbox[i]["id"])
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue

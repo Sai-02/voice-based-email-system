@@ -1,5 +1,6 @@
 import speech_recognition as sr
 import pyttsx3
+import streamlit as st
 
 
 def speakText(command):
@@ -25,3 +26,21 @@ def listen():
     except Exception as e:
         print(e)
         return "Sorry didn't hear what you said ??"
+
+
+def transcribe_speech():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source)
+        with st.spinner("Listening..."):
+            audio = r.listen(source)
+            st.write("Transcribing...")
+            try:
+                text = r.recognize_google(audio)
+                st.markdown("You said: **:green["+text+"]**")
+                return text
+            except sr.UnknownValueError:
+                st.write("Could not understand audio")
+            except sr.RequestError as e:
+                st.write(
+                    "Could not request results from Google Speech Recognition service; {0}".format(e))
