@@ -146,3 +146,7 @@ def listen():
         except:
             print("sorry, could not recognise")
             # listen()
+
+
+def markEmailAsRead(service, messageId):
+    service.users().messages().modify(userId='me', id=messageId, body={'removeLabelIds': ['UNREAD']}).execute()

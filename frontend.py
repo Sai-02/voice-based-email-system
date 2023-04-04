@@ -3,7 +3,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from readMailUtilities import readmail
 import pyttsx3
-from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName
+from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead
 from test import speakText, listen, transcribe_speech
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
@@ -121,6 +121,7 @@ if start_app:
                                 speakAndWrite(mailBody)
                                 speakAndWrite("                       ")
                                 speakAndWrite("Over")
+                                markEmailAsRead(service, inbox[i]["id"])
                                 handleAttachments(
                                     dictionary, service, inbox[i]["id"])
                                 continue
