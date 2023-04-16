@@ -1,7 +1,7 @@
 from __future__ import print_function
 import streamlit as st
 import streamlit.components.v1 as components
-from readMailUtilities import readmail
+from readMailUtilities import readmail, handleReadMail
 import pyttsx3
 from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead
 from test import speakText, listen, transcribe_speech
@@ -16,8 +16,6 @@ import base64
 import constant
 from email.message import EmailMessage
 import speech_recognition as sr
-from AttachmentUtilites import handleAttachments
-from MailActionUtilities import handleMailActions
 st.title(f"Welcome to VABES: Voice Based Emailing")
 start_app = st.button("Start Application", key='start_app')
 
@@ -85,205 +83,22 @@ if start_app:
                 if (isResponseUnread(readMailType)):
                     st.text("Reading out latest unread mails: ")
                     speakAndWrite("Reading out latest unread mails: ")
-                    service = build('gmail', 'v1', credentials=creds)
-                    inbox = getLastTenMails(service, constant.GET_PRIMARY)
-                    for i in range(10):
-                        dictionary = getMessageFromMessageID(
-                            service, inbox[i]["id"])
-                        # print("                                      ")
-                        # print("This was your "+str(i+1)+" mail")
-                        # speakAndWrite("Now next mail is        ")
-                        try:
-                            # जय श्री राम
-                            senderDetails = [sub['value'] for sub in dictionary['payload']
-                                             ['headers'] if sub['name'] == constant.FROM][0]
-                            subject = [sub['value'] for sub in dictionary['payload']
-                                       ['headers'] if sub['name'] == constant.SUBJECT][0]
-                            senderarr = senderDetails.split(' ')
-                            senderarrlen = len(senderarr)
-                            senderEmail = senderarr[senderarrlen - 1]
-                            # Removing "<" & ">" from email
-                            senderEmail = re.sub("\<", " ", senderEmail)
-                            senderEmail = re.sub("\>", " ", senderEmail)
-                            senderName = " ".join(
-                                senderarr[0: (senderarrlen - 1)])
-
-                            st.text(senderName + " says " + subject +
-                                    "\n1. Read Emails \n2. Next Emails \n3.Go back")
-                            speakAndWrite(senderName + " says " + subject)
-                            speakAndWrite("Read email")
-                            speakAndWrite("Next mail")
-                            speakAndWrite("Go back")
-                            shouldReadNext = transcribe_speech()
-                            if (isResponseRead(shouldReadNext)):
-                                speakAndWrite("Here is the mail: ")
-                                mailBody = readmail(dictionary)
-                                st.text("Here is the mail: \n"+mailBody)
-                                speakAndWrite(mailBody)
-                                speakAndWrite("                       ")
-                                speakAndWrite("Over")
-                                markEmailAsRead(service, inbox[i]["id"])
-                                handleAttachments(
-                                    dictionary, service, inbox[i]["id"])
-                                handleMailActions(service, inbox[i]["id"])
-                                continue
-                            if (isResponseNext(shouldReadNext)):
-                                continue
-                            else:
-                                break
-                        except Exception as e:
-                            print(e)
+                    handleReadMail(constant.GET_PRIMARY, creds)
                 elif (isResponseStarred(readMailType)):
                     st.text("Reading out latest Starred mails: ")
                     speakAndWrite("Reading out latest Starred mails: ")
-                    service = build('gmail', 'v1', credentials=creds)
-                    inbox = getLastTenMails(
-                        service, constant.GET_STARRED)
-                    for i in range(10):
-                        dictionary = getMessageFromMessageID(
-                            service, inbox[i]["id"])
-                        # print("                                      ")
-                        # print("This was your "+str(i+1)+" mail")
-                        # speakAndWrite("Now next mail is        ")
-                        try:
-                            senderDetails = [sub['value'] for sub in dictionary['payload']
-                                             ['headers'] if sub['name'] == constant.FROM][0]
-                            subject = [sub['value'] for sub in dictionary['payload']
-                                       ['headers'] if sub['name'] == constant.SUBJECT][0]
-                            senderarr = senderDetails.split(' ')
-                            senderarrlen = len(senderarr)
-                            senderEmail = senderarr[senderarrlen - 1]
-                            # Removing "<" & ">" from email
-                            senderEmail = re.sub("\<", " ", senderEmail)
-                            senderEmail = re.sub("\>", " ", senderEmail)
-                            senderName = " ".join(
-                                senderarr[0: (senderarrlen - 1)])
-                            st.text(senderName + " says " + subject)
-                            speakAndWrite(senderName + " says " + subject)
-                            st.text("1. Read email \n2. Next mail \n3. Go back")
-                            speakAndWrite("Read email")
-                            speakAndWrite("Next mail")
-                            speakAndWrite("Go back")
-                            shouldReadNext = transcribe_speech()
-                            if (isResponseRead(shouldReadNext)):
-                                speakAndWrite("Here is the mail: ")
-                                mailBody = readmail(dictionary)
-                                st.text("Here is the mail: \n"+mailBody)
-                                speakAndWrite(mailBody)
-                                speakAndWrite("                       ")
-                                speakAndWrite("Over")
-                                handleAttachments(
-                                    dictionary, service, inbox[i]["id"])
-                                handleMailActions(service, inbox[i]["id"])
-                                continue
-                            if (isResponseNext(shouldReadNext)):
-                                continue
-                            else:
-                                break
-                        except Exception as e:
-                            print(e)
+                    handleReadMail(constant.GET_STARRED, creds)
                 elif (isResponseFullInbox(readMailType)):
                     st.text("Reading out latest mails: ")
                     speakAndWrite("Reading out latest mails: ")
-                    service = build('gmail', 'v1', credentials=creds)
-                    inbox = getLastTenMails(
-                        service, constant.GET_FULL_INBOX)
-                    for i in range(10):
-                        dictionary = getMessageFromMessageID(
-                            service, inbox[i]["id"])
-                        # print("                                      ")
-                        # print("This was your "+str(i+1)+" mail")
-                        # speakAndWrite("Now next mail is        ")
-                        try:
-                            senderDetails = [sub['value'] for sub in dictionary['payload']
-                                             ['headers'] if sub['name'] == constant.FROM][0]
-                            subject = [sub['value'] for sub in dictionary['payload']
-                                       ['headers'] if sub['name'] == constant.SUBJECT][0]
-                            senderarr = senderDetails.split(' ')
-                            senderarrlen = len(senderarr)
-                            senderEmail = senderarr[senderarrlen - 1]
-                            # Removing "<" & ">" from email
-                            senderEmail = re.sub("\<", " ", senderEmail)
-                            senderEmail = re.sub("\>", " ", senderEmail)
-                            senderName = " ".join(
-                                senderarr[0: (senderarrlen - 1)])
-                            st.text(senderName + " says " + subject +
-                                    "\n1. Read Email \n2. Next Email \n3.Go back")
-                            speakAndWrite(senderName + " says " + subject)
-                            speakAndWrite("Read email")
-                            speakAndWrite("Next mail")
-                            speakAndWrite("Go back")
-                            shouldReadNext = transcribe_speech()
-                            if (isResponseRead(shouldReadNext)):
-                                speakAndWrite("Here is the mail: ")
-                                mailBody = readmail(dictionary)
-                                st.text("Here is the mail: \n"+mailBody)
-                                speakAndWrite(mailBody)
-                                speakAndWrite("                       ")
-                                speakAndWrite("Over")
-                                handleAttachments(
-                                    dictionary, service, inbox[i]["id"])
-                                handleMailActions(service, inbox[i]["id"])
-                                continue
-                            if (isResponseNext(shouldReadNext)):
-                                continue
-                            else:
-                                break
-                        except Exception as e:
-                            print(e)
-
+                    handleReadMail(constant.GET_FULL_INBOX, creds)
                 elif (isResponseSearchByName(readMailType)):
                     st.text("What name should I search for?")
                     speakAndWrite("What name should I search for?")
                     searchName = transcribe_speech()
                     st.text("Reading out latest mails by: "+searchName)
                     speakAndWrite("Reading out latest mails by: "+searchName)
-                    service = build('gmail', 'v1', credentials=creds)
-                    inbox = getLastTenMails(
-                        service, constant.SEARCH_MAIL_BY_NAME + searchName)
-                    for i in range(10):
-                        dictionary = getMessageFromMessageID(
-                            service, inbox[i]["id"])
-                        # print("                                      ")
-                        # print("This was your "+str(i+1)+" mail")
-                        # speakAndWrite("Now next mail is        ")
-                        try:
-                            senderDetails = [sub['value'] for sub in dictionary['payload']
-                                             ['headers'] if sub['name'] == constant.FROM][0]
-                            subject = [sub['value'] for sub in dictionary['payload']
-                                       ['headers'] if sub['name'] == constant.SUBJECT][0]
-                            senderarr = senderDetails.split(' ')
-                            senderarrlen = len(senderarr)
-                            senderEmail = senderarr[senderarrlen - 1]
-                            # Removing "<" & ">" from email
-                            senderEmail = re.sub("\<", " ", senderEmail)
-                            senderEmail = re.sub("\>", " ", senderEmail)
-                            senderName = " ".join(
-                                senderarr[0: (senderarrlen - 1)])
-                            st.text(senderName + " says " + subject +
-                                    "\n1. Read Email \n2. Next Email \n3.Go back")
-                            speakAndWrite(senderName + " says " + subject)
-                            speakAndWrite("Read email")
-                            speakAndWrite("Next mail")
-                            speakAndWrite("Go back")
-                            shouldReadNext = transcribe_speech()
-                            if (isResponseRead(shouldReadNext)):
-                                speakAndWrite("Here is the mail: ")
-                                mailBody = readmail(dictionary)
-                                st.text("Here is the mail: \n"+mailBody)
-                                speakAndWrite(mailBody)
-                                speakAndWrite("                       ")
-                                speakAndWrite("Over")
-                                handleAttachments(
-                                    dictionary, service, inbox[i]["id"])
-                                handleMailActions(service, inbox[i]["id"])
-                                continue
-                            if (isResponseNext(shouldReadNext)):
-                                continue
-                            else:
-                                break
-                        except Exception as e:
-                            print(e)
+                    handleReadMail(constant.SEARCH_MAIL_BY_NAME + searchName, creds)
                 else:
                     speakAndWrite("Can you repeat ?")
                     continue

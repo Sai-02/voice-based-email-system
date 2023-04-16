@@ -3,7 +3,66 @@ import re
 from bs4 import BeautifulSoup
 from Utilities import decodeMailBody,  message_full_recursion, message_full_recursion_html
 import demoji
+import constant
+from googleapiclient.discovery import build
+import streamlit as st
+from test import speakText, listen, transcribe_speech
+from AttachmentUtilites import handleAttachments
+from MailActionUtilities import handleMailActions
+from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead
 
+def speakAndWrite(val):
+    # st.write(val)
+    speakText(val)
+
+def handleReadMail(readMailCategory, creds):
+    service = build('gmail', 'v1', credentials=creds)
+    inbox = getLastTenMails(service, readMailCategory)
+    for i in range(inbox.length):
+        dictionary = getMessageFromMessageID(
+            service, inbox[i]["id"])
+        # print("                                      ")
+        # print("This was your "+str(i+1)+" mail")
+        # speakAndWrite("Now next mail is        ")
+        try:
+            # जय श्री राम
+            senderDetails = [sub['value'] for sub in dictionary['payload']
+                             ['headers'] if sub['name'] == constant.FROM][0]
+            subject = [sub['value'] for sub in dictionary['payload']
+                       ['headers'] if sub['name'] == constant.SUBJECT][0]
+            senderarr = senderDetails.split(' ')
+            senderarrlen = len(senderarr)
+            senderEmail = senderarr[senderarrlen - 1]
+            # Removing "<" & ">" from email
+            senderEmail = re.sub("\<", " ", senderEmail)
+            senderEmail = re.sub("\>", " ", senderEmail)
+            senderName = " ".join(senderarr[0: (senderarrlen - 1)])
+
+            st.text(senderName + " says " + subject +
+                    "\n1. Read Emails \n2. Next Emails \n3.Go back")
+            speakAndWrite(senderName + " says " + subject)
+            speakAndWrite("Read email")
+            speakAndWrite("Next mail")
+            speakAndWrite("Go back")
+            shouldReadNext = transcribe_speech()
+            if (isResponseRead(shouldReadNext)):
+                speakAndWrite("Here is the mail: ")
+                mailBody = readmail(dictionary)
+                st.text("Here is the mail: \n"+mailBody)
+                speakAndWrite(mailBody)
+                speakAndWrite("                       ")
+                speakAndWrite("Over")
+                markEmailAsRead(service, inbox[i]["id"])
+                handleAttachments(
+                    dictionary, service, inbox[i]["id"])
+                handleMailActions(service, inbox[i]["id"])
+                continue
+            if (isResponseNext(shouldReadNext)):
+                continue
+            else:
+                break
+        except Exception as e:
+            print(e)
 
 def readmail(data):
     # Getting data in text format
