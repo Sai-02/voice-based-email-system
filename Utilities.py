@@ -1,7 +1,7 @@
 from __future__ import print_function
 import base64
 import speech_recognition as sr
-from constant import SCOPES, getStarred, getUnread
+import constant
 # If modifying these scopes, delete the file token.json.
 
 
@@ -149,4 +149,14 @@ def listen():
 
 
 def markEmailAsRead(service, messageId):
-    service.users().messages().modify(userId='me', id=messageId, body={'removeLabelIds': ['UNREAD']}).execute()
+    service.users().messages().modify(userId='me', id=messageId,
+                                      body={'removeLabelIds': [constant.UNREAD]}).execute()
+
+
+def markEmailAsSpam(service, messageId):
+    service.users().messages().modify(userId='me', id=messageId,
+                                      body={'addLabelIds': [constant.SPAM]}).execute()
+
+def markEmailAsStarred(service, messageId):
+    service.users().messages().modify(userId='me', id=messageId,
+                                      body={'addLabelIds': [constant.STARRED]}).execute()

@@ -17,6 +17,7 @@ import constant
 from email.message import EmailMessage
 import speech_recognition as sr
 from AttachmentUtilites import handleAttachments
+from MailActionUtilities import handleMailActions
 st.title(f"Welcome to VABES: Voice Based Emailing")
 start_app = st.button("Start Application", key='start_app')
 
@@ -124,6 +125,7 @@ if start_app:
                                 markEmailAsRead(service, inbox[i]["id"])
                                 handleAttachments(
                                     dictionary, service, inbox[i]["id"])
+                                handleMailActions(service, inbox[i]["id"])
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue
@@ -172,6 +174,7 @@ if start_app:
                                 speakAndWrite("Over")
                                 handleAttachments(
                                     dictionary, service, inbox[i]["id"])
+                                handleMailActions(service, inbox[i]["id"])
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue
@@ -220,6 +223,7 @@ if start_app:
                                 speakAndWrite("Over")
                                 handleAttachments(
                                     dictionary, service, inbox[i]["id"])
+                                handleMailActions(service, inbox[i]["id"])
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue
@@ -272,6 +276,7 @@ if start_app:
                                 speakAndWrite("Over")
                                 handleAttachments(
                                     dictionary, service, inbox[i]["id"])
+                                handleMailActions(service, inbox[i]["id"])
                                 continue
                             if (isResponseNext(shouldReadNext)):
                                 continue

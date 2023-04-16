@@ -16,3 +16,6 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
 getStarred = 'is:starred'
 getUnread = 'is:unread'
 APPLICATION_PDF = "application/pdf"
+SPAM = "SPAM"
+UNREAD = "UNREAD"
+STARRED = "STARRED"
