@@ -1,7 +1,10 @@
 from __future__ import print_function
 import base64
+from email.mime.text import MIMEText
 import speech_recognition as sr
+import streamlit as st
 import constant
+from email.message import EmailMessage
 # If modifying these scopes, delete the file token.json.
 
 
@@ -157,6 +160,31 @@ def markEmailAsSpam(service, messageId):
     service.users().messages().modify(userId='me', id=messageId,
                                       body={'addLabelIds': [constant.SPAM]}).execute()
 
+
 def markEmailAsStarred(service, messageId):
     service.users().messages().modify(userId='me', id=messageId,
                                       body={'addLabelIds': [constant.STARRED]}).execute()
+
+
+def replyToThisMail(messageID, body, msg, service, senderEmail, subject, headerId):
+    message = EmailMessage()
+    message.set_content(body)
+    message["To"] = senderEmail
+    message["Subject"] = subject
+    message['In-Reply-To'] = headerId
+    message['References'] = headerId
+    encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+    create_message = {
+        "message": {
+            'raw': encoded_message,
+            'threadId': msg["threadId"]
+
+        }
+    }
+    # Creating draft mail in next line
+    draft = service.users().drafts().create(
+        userId="me", body=create_message).execute()
+    # Sending mail through draft to send mail in a thread
+    send_message = service.users().drafts().send(
+        userId='me', body={'id': draft['id']}).execute()
+    return "Reply Sent"

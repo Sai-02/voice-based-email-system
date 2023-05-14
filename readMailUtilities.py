@@ -11,14 +11,16 @@ from AttachmentUtilites import handleAttachments
 from MailActionUtilities import handleMailActions
 from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead
 
+
 def speakAndWrite(val):
     # st.write(val)
     speakText(val)
 
+
 def handleReadMail(readMailCategory, creds):
     service = build('gmail', 'v1', credentials=creds)
     inbox = getLastTenMails(service, readMailCategory)
-    for i in range(inbox.length):
+    for i in range(len(inbox)):
         dictionary = getMessageFromMessageID(
             service, inbox[i]["id"])
         # print("                                      ")
@@ -30,6 +32,8 @@ def handleReadMail(readMailCategory, creds):
                              ['headers'] if sub['name'] == constant.FROM][0]
             subject = [sub['value'] for sub in dictionary['payload']
                        ['headers'] if sub['name'] == constant.SUBJECT][0]
+            headerId = [sub['value'] for sub in dictionary['payload']
+                        ['headers'] if sub['name'] == constant.MESSAGE_ID][0]
             senderarr = senderDetails.split(' ')
             senderarrlen = len(senderarr)
             senderEmail = senderarr[senderarrlen - 1]
@@ -55,7 +59,8 @@ def handleReadMail(readMailCategory, creds):
                 markEmailAsRead(service, inbox[i]["id"])
                 handleAttachments(
                     dictionary, service, inbox[i]["id"])
-                handleMailActions(service, inbox[i]["id"])
+                handleMailActions(service, senderEmail,
+                                  inbox[i]["id"], inbox[i], subject, headerId)
                 continue
             if (isResponseNext(shouldReadNext)):
                 continue
@@ -63,6 +68,7 @@ def handleReadMail(readMailCategory, creds):
                 break
         except Exception as e:
             print(e)
+
 
 def readmail(data):
     # Getting data in text format
