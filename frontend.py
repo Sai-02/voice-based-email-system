@@ -4,6 +4,7 @@ import streamlit.components.v1 as components
 from readMailUtilities import readmail, handleReadMail
 import pyttsx3
 from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead
+from sendMailUtilities import handleSendMail
 from test import speakText, listen, transcribe_speech
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
@@ -98,43 +99,13 @@ if start_app:
                     searchName = transcribe_speech()
                     st.text("Reading out latest mails by: "+searchName)
                     speakAndWrite("Reading out latest mails by: "+searchName)
-                    handleReadMail(constant.SEARCH_MAIL_BY_NAME + searchName, creds)
+                    handleReadMail(
+                        constant.SEARCH_MAIL_BY_NAME + searchName, creds)
                 else:
                     speakAndWrite("Can you repeat ?")
                     continue
             elif (isResponseSend(readOrSend)):
-                st.markdown("**:blue[What is the subject of the mail?]**")
-                speakAndWrite("What is the subject of the mail?")
-                subject = transcribe_speech()
-                st.markdown("**:blue[What is the body of the email?]**")
-                speakAndWrite("What is the body of the email")
-                body = transcribe_speech()
-                st.markdown("**:blue[What is receivers's mail id?]**")
-                speakAndWrite("What is receivers's  mail id")
-                mailID = transcribe_speech()
-                try:
-                    service = build('gmail', 'v1', credentials=creds)
-                    message = EmailMessage()
-                    message.set_content(body)
-                    message['To'] = mailID.replace(" ", "").lower()
-                    print(message['To'])
-                    message['Subject'] = subject
-                    # encoded message
-                    encoded_message = base64.urlsafe_b64encode(message.as_bytes()) \
-                        .decode()
-                    create_message = {
-                        'raw': encoded_message
-                    }
-                    send_message = (service.users().messages().send
-                                    (userId="me", body=create_message).execute())
-                    print(F'Message Id: {send_message["id"]}')
-                    st.text("Mail Sent!!")
-                    speakAndWrite("Mail Sent!!")
-                except HttpError as error:
-                    print(F'An error occurred: {error}')
-                    st.text("Receiver's Email Id Incorrect!")
-                    speakAndWrite("Receiver's Email Id Incorrect!")
-                    send_message = None
+                handleSendMail(creds)
             else:
                 # speakAndWrite("Sorry can you repeat yourself?")
                 st.text("Sorry can you repeat yourself?")

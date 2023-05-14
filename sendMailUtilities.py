@@ -1,5 +1,5 @@
 from __future__ import print_function
-
+import streamlit as st
 import base64
 from email.message import EmailMessage
 
@@ -7,6 +7,12 @@ import google.auth
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
+from test import speakText, transcribe_speech
+
+
+def speakAndWrite(val):
+    # st.write(val)
+    speakText(val)
 
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -56,3 +62,38 @@ def gmail_send_message():
 
 if __name__ == '__main__':
     gmail_send_message()
+
+
+def handleSendMail(creds):
+    st.markdown("**:blue[What is the subject of the mail?]**")
+    speakAndWrite("What is the subject of the mail?")
+    subject = transcribe_speech()
+    st.markdown("**:blue[What is the body of the email?]**")
+    speakAndWrite("What is the body of the email")
+    body = transcribe_speech()
+    st.markdown("**:blue[What is receivers's mail id?]**")
+    speakAndWrite("What is receivers's  mail id")
+    mailID = transcribe_speech()
+    try:
+        service = build('gmail', 'v1', credentials=creds)
+        message = EmailMessage()
+        message.set_content(body)
+        message['To'] = mailID.replace(" ", "").lower()
+        print(message['To'])
+        message['Subject'] = subject
+        # encoded message
+        encoded_message = base64.urlsafe_b64encode(message.as_bytes()) \
+            .decode()
+        create_message = {
+            'raw': encoded_message
+        }
+        send_message = (service.users().messages().send
+                        (userId="me", body=create_message).execute())
+        print(F'Message Id: {send_message["id"]}')
+        st.text("Mail Sent!!")
+        speakAndWrite("Mail Sent!!")
+    except HttpError as error:
+        print(F'An error occurred: {error}')
+        st.text("Receiver's Email Id Incorrect!")
+        speakAndWrite("Receiver's Email Id Incorrect!")
+        send_message = None
