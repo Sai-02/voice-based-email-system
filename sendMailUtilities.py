@@ -7,6 +7,7 @@ import google.auth
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
+from Utilities import isResponseYes
 from test import speakText, transcribe_speech
 
 
@@ -74,11 +75,23 @@ def handleSendMail(creds):
     st.markdown("**:blue[What is receivers's mail id?]**")
     speakAndWrite("What is receivers's  mail id")
     mailID = transcribe_speech()
+    
+    st.markdown("**:blue[Do you want to add cc to this mail?]**")
+    speakAndWrite("Do you want to add cc to this mail?")
+    shouldAddCc = transcribe_speech()
+    ccMailID = ""
+    if (isResponseYes(shouldAddCc)):
+        st.markdown("**:blue[What is the mail id?]**")
+        speakAndWrite("What is the mail id?")
+        ccMailID = transcribe_speech()
+
     try:
         service = build('gmail', 'v1', credentials=creds)
         message = EmailMessage()
         message.set_content(body)
-        message['To'] = mailID.replace(" ", "").lower()
+        message['To'] = mailID.replace(" ", "").replace("attherate","@").lower()
+        if(len(ccMailID)>0):
+            message['cc'] = ccMailID.replace(" ", "").replace("attherate","@").lower()
         print(message['To'])
         message['Subject'] = subject
         # encoded message
