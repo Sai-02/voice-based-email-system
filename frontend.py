@@ -81,7 +81,7 @@ if start_app:
                 speakAndWrite("Full inbox")
                 speakAndWrite("Search mails by name")
                 speakAndWrite("Go back")
-                while(1):
+                while (1):
                     readMailType = transcribe_speech()
                     if (isResponseUnread(readMailType)):
                         st.text("Reading out latest unread mails: ")
@@ -99,8 +99,14 @@ if start_app:
                         st.text("What name should I search for?")
                         speakAndWrite("What name should I search for?")
                         searchName = transcribe_speech()
+                        while (not searchName or len(searchName) == 0):
+                            speakText("Can you please repeat")
+                            st.text("Can you please repeat")
+                            searchName = transcribe_speech()
+
                         st.text("Reading out latest mails by: "+searchName)
-                        speakAndWrite("Reading out latest mails by: "+searchName)
+                        speakAndWrite(
+                            "Reading out latest mails by: "+searchName)
                         handleReadMail(
                             constant.SEARCH_MAIL_BY_NAME + searchName, creds)
                     elif (isResponseGoBack(readMailType)):

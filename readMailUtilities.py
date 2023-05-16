@@ -1,7 +1,7 @@
 from __future__ import print_function
 import re
 from bs4 import BeautifulSoup
-from Utilities import decodeMailBody,  message_full_recursion, message_full_recursion_html
+from Utilities import decodeMailBody, isResponseGoBack,  message_full_recursion, message_full_recursion_html
 import demoji
 import constant
 from googleapiclient.discovery import build
@@ -48,23 +48,28 @@ def handleReadMail(readMailCategory, creds):
             speakAndWrite("Read email")
             speakAndWrite("Next mail")
             speakAndWrite("Go back")
-            shouldReadNext = transcribe_speech()
-            if (isResponseRead(shouldReadNext)):
-                speakAndWrite("Here is the mail: ")
-                mailBody = readmail(dictionary)
-                st.text("Here is the mail: \n"+mailBody)
-                speakAndWrite(mailBody)
-                speakAndWrite("                       ")
-                speakAndWrite("Over")
-                markEmailAsRead(service, inbox[i]["id"])
-                handleAttachments(
-                    dictionary, service, inbox[i]["id"])
-                handleMailActions(service, senderEmail,
-                                  inbox[i]["id"], inbox[i], subject, headerId)
-                continue
-            if (isResponseNext(shouldReadNext)):
-                continue
-            else:
+            shouldGoBack = 0
+            while (1):
+                shouldReadNext = transcribe_speech()
+                if (isResponseRead(shouldReadNext)):
+                    speakAndWrite("Here is the mail: ")
+                    mailBody = readmail(dictionary)
+                    st.text("Here is the mail: \n"+mailBody)
+                    speakAndWrite(mailBody)
+                    speakAndWrite("                       ")
+                    speakAndWrite("Over")
+                    markEmailAsRead(service, inbox[i]["id"])
+                    handleAttachments(
+                        dictionary, service, inbox[i]["id"])
+                    handleMailActions(service, senderEmail,
+                                      inbox[i]["id"], inbox[i], subject, headerId)
+                elif (isResponseGoBack(shouldReadNext)):
+                    shouldGoBack = 1
+                else:
+                    speakText("Can you repeat again")
+                    continue
+                break
+            if (shouldGoBack):
                 break
         except Exception as e:
             print(e)
