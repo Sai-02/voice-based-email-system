@@ -33,58 +33,63 @@ def isResponse3(resp):
 def isResponseRead(resp):
     for x in ["reed", "read", "re ead"]:
         if (resp and resp.lower().find(x) != -1):
-            return 1
+            return "read mail"
     return 0
 
 
 def isResponseSend(resp):
     for x in ["send", "sent", "sed", "sad", "sand"]:
         if (resp and resp.lower().find(x) != -1):
-            return 1
+            return "send mail"
     return 0
 
 
 def isResponseUnread(resp):
     for x in ["unread", "un read", "un red", "umread", "100", "hundred", "Android"]:
         if (resp and resp.lower().find(x) != -1):
-            return 1
+            return "unread mail"
     return 0
 
 
 def isResponseStarred(resp):
     for x in ["star", "sitar"]:
         if (resp and resp.lower().find(x) != -1):
-            return 1
+            return "starred mail"
     return 0
 
 
 def isResponseFullInbox(resp):
     for x in ["full", "inbox", "in box", "fool", "box"]:
         if (resp and resp.lower().find(x) != -1):
-            return 1
+            return "full inbox"
     return 0
 
 
 def isResponseNext(resp):
     for x in ["next", "ext", "text", "test", "axe", "ex", "nest"]:
         if (resp and resp.lower().find(x) != -1):
-            return 1
+            return "next mail"
     return 0
 
 
 def isResponseSearchByName(resp):
     for x in ["name", "nem", "nam", "by", "buy", "search"]:
         if (resp and resp.lower().find(x) != -1):
-            return 1
+            return "search mail by name"
     return 0
 
 
 def isResponseYes(resp):
     for x in ["Yes", "S", "yeah", "ya", "yo", "yess", "es"]:
         if (resp and resp.lower().find(x) != -1):
-            return 1
+            return "yes"
     return 0
 
+def isResponseGoBack(resp):
+    for x in ["go", "goback", "go back", "back", "bag", "beck"]:
+        if (resp and resp.lower().find(x) != -1):
+            return "go back"
+    return 0
 
 def getMessageFromMessageID(service, messageID):
     mescontent = service.users().messages().get(userId='me', id=messageID).execute()

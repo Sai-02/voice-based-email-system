@@ -3,7 +3,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from readMailUtilities import readmail, handleReadMail
 import pyttsx3
-from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead
+from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead, isResponseGoBack
 from sendMailUtilities import handleSendMail
 from test import speakText, listen, transcribe_speech
 from googleapiclient.errors import HttpError
@@ -73,37 +73,43 @@ if start_app:
             except Exception as e:
                 print(e)
             if (isResponseRead(readOrSend)):
-                st.text("Okay so you want to read your emails \nPlease specify what mails do you want to read? \n1. Unread mails \n2. Starred mails \n3. Full Inbox \n4. Search mails by name")
-                speakAndWrite("Okay so you want to read your emails")
-                speakAndWrite("Please specify what mails do you want to read?")
-                speakAndWrite("Unread mails")
-                speakAndWrite("Starred mails")
-                speakAndWrite("Full inbox")
-                speakAndWrite("Search mails by name")
-                readMailType = transcribe_speech()
-                if (isResponseUnread(readMailType)):
-                    st.text("Reading out latest unread mails: ")
-                    speakAndWrite("Reading out latest unread mails: ")
-                    handleReadMail(constant.GET_PRIMARY, creds)
-                elif (isResponseStarred(readMailType)):
-                    st.text("Reading out latest Starred mails: ")
-                    speakAndWrite("Reading out latest Starred mails: ")
-                    handleReadMail(constant.GET_STARRED, creds)
-                elif (isResponseFullInbox(readMailType)):
-                    st.text("Reading out latest mails: ")
-                    speakAndWrite("Reading out latest mails: ")
-                    handleReadMail(constant.GET_FULL_INBOX, creds)
-                elif (isResponseSearchByName(readMailType)):
-                    st.text("What name should I search for?")
-                    speakAndWrite("What name should I search for?")
-                    searchName = transcribe_speech()
-                    st.text("Reading out latest mails by: "+searchName)
-                    speakAndWrite("Reading out latest mails by: "+searchName)
-                    handleReadMail(
-                        constant.SEARCH_MAIL_BY_NAME + searchName, creds)
-                else:
-                    speakAndWrite("Can you repeat ?")
-                    continue
+                while(1):
+                    st.text("Okay so you want to read your emails \nPlease specify what mails do you want to read? \n1. Unread mails \n2. Starred mails \n3. Full Inbox \n4. Search mails by name")
+                    speakAndWrite("Okay so you want to read your emails")
+                    speakAndWrite("Please specify what mails do you want to read?")
+                    speakAndWrite("Unread mails")
+                    speakAndWrite("Starred mails")
+                    speakAndWrite("Full inbox")
+                    speakAndWrite("Search mails by name")
+                    speakAndWrite("Go back")
+                    readMailType = transcribe_speech()
+                    if (isResponseUnread(readMailType)):
+                        st.text("Reading out latest unread mails: ")
+                        speakAndWrite("Reading out latest unread mails: ")
+                        handleReadMail(constant.GET_PRIMARY, creds)
+                    elif (isResponseStarred(readMailType)):
+                        st.text("Reading out latest Starred mails: ")
+                        speakAndWrite("Reading out latest Starred mails: ")
+                        handleReadMail(constant.GET_STARRED, creds)
+                    elif (isResponseFullInbox(readMailType)):
+                        st.text("Reading out latest mails: ")
+                        speakAndWrite("Reading out latest mails: ")
+                        handleReadMail(constant.GET_FULL_INBOX, creds)
+                    elif (isResponseSearchByName(readMailType)):
+                        st.text("What name should I search for?")
+                        speakAndWrite("What name should I search for?")
+                        searchName = transcribe_speech()
+                        st.text("Reading out latest mails by: "+searchName)
+                        speakAndWrite("Reading out latest mails by: "+searchName)
+                        handleReadMail(
+                            constant.SEARCH_MAIL_BY_NAME + searchName, creds)
+                    elif (isResponseGoBack(readMailType)):
+                        break
+                    else:
+                        speakAndWrite("Can you please repeat ?")
+                        continue
+
+                    break
             elif (isResponseSend(readOrSend)):
                 handleSendMail(creds)
             else:
