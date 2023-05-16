@@ -73,15 +73,15 @@ if start_app:
             except Exception as e:
                 print(e)
             if (isResponseRead(readOrSend)):
+                st.text("Okay so you want to read your emails \nPlease specify what mails do you want to read? \n1. Unread mails \n2. Starred mails \n3. Full Inbox \n4. Search mails by name \n5. Go Back")
+                speakAndWrite("Okay so you want to read your emails")
+                speakAndWrite("Please specify what mails do you want to read?")
+                speakAndWrite("Unread mails")
+                speakAndWrite("Starred mails")
+                speakAndWrite("Full inbox")
+                speakAndWrite("Search mails by name")
+                speakAndWrite("Go back")
                 while(1):
-                    st.text("Okay so you want to read your emails \nPlease specify what mails do you want to read? \n1. Unread mails \n2. Starred mails \n3. Full Inbox \n4. Search mails by name")
-                    speakAndWrite("Okay so you want to read your emails")
-                    speakAndWrite("Please specify what mails do you want to read?")
-                    speakAndWrite("Unread mails")
-                    speakAndWrite("Starred mails")
-                    speakAndWrite("Full inbox")
-                    speakAndWrite("Search mails by name")
-                    speakAndWrite("Go back")
                     readMailType = transcribe_speech()
                     if (isResponseUnread(readMailType)):
                         st.text("Reading out latest unread mails: ")
