@@ -4,7 +4,7 @@ from tika import parser
 import streamlit as st
 from test import speakText
 from Utilities import isResponseYes
-from test import transcribe_speech
+from test import transcribe_speech_with_repeat
 
 
 def handleAttachments(data, service, messageID):
@@ -20,7 +20,7 @@ def handleAttachments(data, service, messageID):
     st.text("This mail has "+str(len(attachmentList))+" attachments")
     speakText("Do  u want to read attachments")
     st.text("Do  u want to read attachments")
-    res = transcribe_speech()
+    res = transcribe_speech_with_repeat()
     if (isResponseYes(res)):
         speakText("Doing...")
         st.text("Doing...")
@@ -29,7 +29,7 @@ def handleAttachments(data, service, messageID):
             speakText("Name of the file is "+attachment["fileName"])
             st.text("Do  u want to read it ?")
             speakText("Do  u want to read it ?")
-            res = transcribe_speech()
+            res = transcribe_speech_with_repeat()
             if (isResponseYes(res)):
                 readableText = getAttachments(
                     service, messageID, attachment["attachmentId"])

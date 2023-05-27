@@ -28,6 +28,13 @@ def listen():
         print(e)
         return "Sorry didn't hear what you said ??"
 
+def transcribe_speech_with_repeat():
+    predictedInput = transcribe_speech()
+    while (not predictedInput or len(predictedInput) == 0):
+        speakText("Can you please repeat")
+        st.text("Can you please repeat")
+        predictedInput = transcribe_speech()
+    return predictedInput
 
 def transcribe_speech():
     r = sr.Recognizer()

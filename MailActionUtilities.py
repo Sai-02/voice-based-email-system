@@ -2,7 +2,7 @@ import constant
 import streamlit as st
 from test import speakText
 from Utilities import isResponseYes, markEmailAsSpam, markEmailAsStarred, replyToThisMail
-from test import transcribe_speech
+from test import transcribe_speech_with_repeat
 
 
 def handleMailActions(service, senderEmail, messageID, message, subject, headerId):
@@ -16,7 +16,7 @@ def handleMailActions(service, senderEmail, messageID, message, subject, headerI
 def handleMarkAsSpam(service, messageID):
     speakText("Do you want to mark this email as spam?")
     st.text("Do you want to mark this email as spam?")
-    res = transcribe_speech()
+    res = transcribe_speech_with_repeat()
     if (isResponseYes(res)):
         speakText("Marking as spam")
         st.text("Marking as spam")
@@ -29,7 +29,7 @@ def handleMarkAsSpam(service, messageID):
 def handleMarkAsStarred(service, messageID):
     speakText("Do you want to mark this email as starred?")
     st.text("Do you want to mark this email as starred?")
-    res = transcribe_speech()
+    res = transcribe_speech_with_repeat()
     if (isResponseYes(res)):
         speakText("Marking as starred")
         st.text("Marking as starred")
@@ -42,11 +42,11 @@ def handleMarkAsStarred(service, messageID):
 def handleReplyToThisMail(messageID, service, message, senderEmail, subject, headerId):
     st.text("Do you want to reply to this mail?")
     speakText("Do you want to reply to this mail?")
-    res = transcribe_speech()
+    res = transcribe_speech_with_repeat()
     if (isResponseYes(res)):
         st.text("Okay, What should be the reply")
         speakText("Okay, What should be the reply")
-        userResponse = transcribe_speech()
+        userResponse = transcribe_speech_with_repeat()
         print(userResponse)
         replyToThisMail(messageID, userResponse, message,
                         service, senderEmail, subject, headerId)

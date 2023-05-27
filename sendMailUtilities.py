@@ -2,13 +2,13 @@ from __future__ import print_function
 import streamlit as st
 import base64
 from email.message import EmailMessage
-
+import re
 import google.auth
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
 from Utilities import isResponseYes
-from test import speakText, transcribe_speech
+from test import speakText, transcribe_speech_with_repeat
 
 
 def speakAndWrite(val):
@@ -68,30 +68,37 @@ if __name__ == '__main__':
 def handleSendMail(creds):
     st.markdown("**:blue[What is the subject of the mail?]**")
     speakAndWrite("What is the subject of the mail?")
-    subject = transcribe_speech()
+    subject = transcribe_speech_with_repeat()
     st.markdown("**:blue[What is the body of the email?]**")
     speakAndWrite("What is the body of the email")
-    body = transcribe_speech()
+    body = transcribe_speech_with_repeat()
     st.markdown("**:blue[What is receivers's mail id?]**")
     speakAndWrite("What is receivers's  mail id")
-    mailID = transcribe_speech()
-    
+    mailID = transcribe_speech_with_repeat()
+    while (not validateEmail(mailID)):
+        st.error("This Email is Invalid! Can you please repeat...", icon="💀")
+        speakAndWrite("This Email is Invalid!")
+        speakAndWrite("Can you please repeat?")
+        mailID = transcribe_speech_with_repeat()
+
     st.markdown("**:blue[Do you want to add cc to this mail?]**")
     speakAndWrite("Do you want to add cc to this mail?")
-    shouldAddCc = transcribe_speech()
+    shouldAddCc = transcribe_speech_with_repeat()
     ccMailID = ""
     if (isResponseYes(shouldAddCc)):
         st.markdown("**:blue[What is the mail id?]**")
         speakAndWrite("What is the mail id?")
-        ccMailID = transcribe_speech()
+        ccMailID = transcribe_speech_with_repeat()
 
     try:
         service = build('gmail', 'v1', credentials=creds)
         message = EmailMessage()
         message.set_content(body)
-        message['To'] = mailID.replace(" ", "").replace("attherate","@").lower()
-        if(len(ccMailID)>0):
-            message['cc'] = ccMailID.replace(" ", "").replace("attherate","@").lower()
+        message['To'] = mailID.replace(
+            " ", "").replace("attherate", "@").lower()
+        if (len(ccMailID) > 0):
+            message['cc'] = ccMailID.replace(
+                " ", "").replace("attherate", "@").lower()
         print(message['To'])
         message['Subject'] = subject
         # encoded message
@@ -110,3 +117,12 @@ def handleSendMail(creds):
         st.text("Receiver's Email Id Incorrect!")
         speakAndWrite("Receiver's Email Id Incorrect!")
         send_message = None
+
+
+def validateEmail(email):
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+    if (re.fullmatch(regex, email)):
+        return True
+
+    else:
+        return False
