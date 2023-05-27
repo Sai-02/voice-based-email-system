@@ -31,7 +31,7 @@ def isResponse3(resp):
 
 
 def isResponseRead(resp):
-    for x in ["reed", "read", "re ead"]:
+    for x in ["reed", "read", "re ead", "Gd"]:
         if (resp and resp.lower().find(x) != -1):
             return "read mail"
     return 0
@@ -80,7 +80,7 @@ def isResponseSearchByName(resp):
 
 
 def isResponseYes(resp):
-    for x in ["Yes", "S", "yeah", "ya", "yo", "yess", "es"]:
+    for x in ["Yes", "S", "yeah", "ya", "yo", "yess", "es", "yas"]:
         if (resp and resp.lower().find(x) != -1):
             return "yes"
     return 0

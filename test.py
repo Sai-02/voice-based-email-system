@@ -39,10 +39,10 @@ def transcribe_speech():
             try:
                 text = r.recognize_google(audio, language='en-IN')
                 functions = [Utilities.isResponse1, Utilities.isResponse2, Utilities.isResponse3, Utilities.isResponseFullInbox, Utilities.isResponseGoBack, Utilities.isResponseNext, Utilities.isResponseRead, Utilities.isResponseSearchByName, Utilities.isResponseSend, Utilities.isResponseStarred, Utilities.isResponseUnread, Utilities.isResponseYes]
-                for fn in functions:
-                    if fn(text):        
-                        text = fn(text)
-                        break
+                # for fn in functions:
+                #     if fn(text):        
+                #         text = fn(text)
+                #         break
                 st.markdown("You said: **:green["+text+"]**")
                 return text
             except sr.UnknownValueError:
