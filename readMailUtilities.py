@@ -6,15 +6,34 @@ import demoji
 import constant
 from googleapiclient.discovery import build
 import streamlit as st
-from test import speakText, listen, transcribe_speech
+from test import speakText, listen, transcribe_speech, transcribe_speech_with_repeat
 from AttachmentUtilites import handleAttachments
 from MailActionUtilities import handleMailActions
-from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead
+from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead, isResponseYes
 
 
 def speakAndWrite(val):
     # st.write(val)
     speakText(val)
+
+def readEmailInParts(content):
+    arr = content.split()
+    contentLen = len(arr)
+    if(contentLen > 60):
+        while(arr and len(arr)>0):
+            toSpeak = " ".join(arr[0:60])
+            st.text(toSpeak)
+            speakText(toSpeak)
+            arr = arr[60:]
+            st.text("This mail has more content. Should I continue?")
+            speakText("This mail has more content. Should I continue?")
+            res = transcribe_speech_with_repeat()
+            if(isResponseYes(res)):
+                continue
+            else:
+                break
+    else:
+        speakText(content)
 
 
 def handleReadMail(readMailCategory, creds):
@@ -54,8 +73,8 @@ def handleReadMail(readMailCategory, creds):
                 if (isResponseRead(shouldReadNext)):
                     speakAndWrite("Here is the mail: ")
                     mailBody = readmail(dictionary)
-                    st.text("Here is the mail: \n"+mailBody)
-                    speakAndWrite(mailBody)
+                    st.text("Here is the mail: \n")
+                    readEmailInParts(mailBody)
                     speakAndWrite("                       ")
                     speakAndWrite("Over")
                     markEmailAsRead(service, inbox[i]["id"])
@@ -155,6 +174,6 @@ def removeBrackets(content):
 
 
 def removeLinks(content):
-    content = re.sub(r'http\S+', ' Link ', content)
-    content = re.sub(r'https\S+', ' Link ', content)
+    content = re.sub(r'http\S+', ' ', content)
+    content = re.sub(r'https\S+', ' ', content)
     return content
