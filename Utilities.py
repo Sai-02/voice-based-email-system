@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 import speech_recognition as sr
 import streamlit as st
 import constant
+import re
 from email.message import EmailMessage
 # If modifying these scopes, delete the file token.json.
 
@@ -193,3 +194,12 @@ def replyToThisMail(messageID, body, msg, service, senderEmail, subject, headerI
     send_message = service.users().drafts().send(
         userId='me', body={'id': draft['id']}).execute()
     return "Reply Sent"
+
+
+def validateEmail(email):
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+    if (re.fullmatch(regex, email)):
+        return True
+
+    else:
+        return False

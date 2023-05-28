@@ -33,6 +33,7 @@ def readEmailInParts(content):
             else:
                 break
     else:
+        st.text(content)
         speakText(content)
 
 
@@ -81,7 +82,7 @@ def handleReadMail(readMailCategory, creds):
                     handleAttachments(
                         dictionary, service, inbox[i]["id"])
                     handleMailActions(service, senderEmail,
-                                      inbox[i]["id"], inbox[i], subject, headerId)
+                                      inbox[i]["id"], inbox[i], subject, headerId, dictionary)
                 elif (isResponseGoBack(shouldReadNext)):
                     shouldGoBack = 1
                 else:

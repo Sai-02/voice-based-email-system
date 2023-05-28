@@ -2,12 +2,11 @@ from __future__ import print_function
 import streamlit as st
 import base64
 from email.message import EmailMessage
-import re
 import google.auth
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
-from Utilities import isResponseYes
+from Utilities import isResponseYes,validateEmail
 from test import speakText, transcribe_speech_with_repeat
 
 
@@ -75,11 +74,13 @@ def handleSendMail(creds):
     st.markdown("**:blue[What is receivers's mail id?]**")
     speakAndWrite("What is receivers's  mail id")
     mailID = transcribe_speech_with_repeat()
+    mailID = mailID.replace(" ", "").replace("attherate", "@").lower()
     while (not validateEmail(mailID)):
         st.error("This Email is Invalid! Can you please repeat...", icon="💀")
         speakAndWrite("This Email is Invalid!")
         speakAndWrite("Can you please repeat?")
         mailID = transcribe_speech_with_repeat()
+        mailID = mailID.replace(" ", "").replace("attherate", "@").lower()
 
     st.markdown("**:blue[Do you want to add cc to this mail?]**")
     speakAndWrite("Do you want to add cc to this mail?")
@@ -89,13 +90,19 @@ def handleSendMail(creds):
         st.markdown("**:blue[What is the mail id?]**")
         speakAndWrite("What is the mail id?")
         ccMailID = transcribe_speech_with_repeat()
+        ccmailID = ccmailID.replace(" ", "").replace("attherate", "@").lower()
+        while (not validateEmail(ccmailID)):
+            st.error("This Email is Invalid! Can you please repeat...", icon="💀")
+            speakAndWrite("This Email is Invalid!")
+            speakAndWrite("Can you please repeat?")
+            ccmailID = transcribe_speech_with_repeat()
+            ccmailID = ccmailID.replace(" ", "").replace("attherate", "@").lower()
 
     try:
         service = build('gmail', 'v1', credentials=creds)
         message = EmailMessage()
         message.set_content(body)
-        message['To'] = mailID.replace(
-            " ", "").replace("attherate", "@").lower()
+        message['To'] = mailID
         if (len(ccMailID) > 0):
             message['cc'] = ccMailID.replace(
                 " ", "").replace("attherate", "@").lower()
@@ -117,12 +124,3 @@ def handleSendMail(creds):
         st.text("Receiver's Email Id Incorrect!")
         speakAndWrite("Receiver's Email Id Incorrect!")
         send_message = None
-
-
-def validateEmail(email):
-    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-    if (re.fullmatch(regex, email)):
-        return True
-
-    else:
-        return False
