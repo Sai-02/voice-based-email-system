@@ -3,9 +3,9 @@ import streamlit as st
 import streamlit.components.v1 as components
 from readMailUtilities import readmail, handleReadMail
 import pyttsx3
-from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead, isResponseGoBack
+from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead, isResponseGoBack, isResponseWakeWord
 from sendMailUtilities import handleSendMail
-from test import speakText, listen, transcribe_speech, transcribe_speech_with_repeat 
+from test import speakText, listen, transcribe_speech, transcribe_speech_with_repeat, wake_application
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -60,68 +60,78 @@ def speakAndWrite(val):
 
 
 if start_app:
-    while (1):
-        try:
-            st.text("What do you want to do\n1. Read Emails \n2. Send Email")
-            speakText("What do you want to do")
-            speakText(" Read Emails ")
-            speakText(" Send  Email ")
-
+    while(1):
+        shouldWakeApplication = wake_application()
+        if(not isResponseWakeWord(shouldWakeApplication)):
+            continue
+        st.markdown("**:orange[Starting the Application]**")
+        speakText("Starting the Application")
+        while(1):
             try:
+                st.text("What do you want to do\n1. Read Emails \n2. Send Email \n3. Go Back")
+                speakText("What do you want to do")
+                speakText(" Read Emails ")
+                speakText(" Send  Email ")
+                speakText(" Go back ")
 
-                readOrSend = transcribe_speech()
+                try:
+                    readOrSend = transcribe_speech()
+                except Exception as e:
+                    print(e)
+                if (isResponseRead(readOrSend)):
+                    st.text("Okay so you want to read your emails \nPlease specify what mails do you want to read? \n1. Unread mails \n2. Starred mails \n3. Full Inbox \n4. Search mails by name \n5. Go Back")
+                    speakAndWrite("Okay so you want to read your emails")
+                    speakAndWrite("Please specify what mails do you want to read?")
+                    speakAndWrite("Unread mails")
+                    speakAndWrite("Starred mails")
+                    speakAndWrite("Full inbox")
+                    speakAndWrite("Search mails by name")
+                    speakAndWrite("Go back")
+                    while (1):
+                        readMailType = transcribe_speech()
+                        if (isResponseUnread(readMailType)):
+                            st.text("Reading out latest unread mails: ")
+                            speakAndWrite("Reading out latest unread mails: ")
+                            handleReadMail(constant.GET_PRIMARY, creds)
+                        elif (isResponseStarred(readMailType)):
+                            st.text("Reading out latest Starred mails: ")
+                            speakAndWrite("Reading out latest Starred mails: ")
+                            handleReadMail(constant.GET_STARRED, creds)
+                        elif (isResponseFullInbox(readMailType)):
+                            st.text("Reading out latest mails: ")
+                            speakAndWrite("Reading out latest mails: ")
+                            handleReadMail(constant.GET_FULL_INBOX, creds)
+                        elif (isResponseSearchByName(readMailType)):
+                            st.text("What name should I search for?")
+                            speakAndWrite("What name should I search for?")
+                            searchName = transcribe_speech_with_repeat()
+
+                            st.text("Reading out latest mails by: "+searchName)
+                            speakAndWrite(
+                                "Reading out latest mails by: "+searchName)
+                            handleReadMail(
+                                constant.SEARCH_MAIL_BY_NAME + searchName, creds)
+                        elif (isResponseGoBack(readMailType)):
+                            break
+                        else:
+                            speakAndWrite("Can you please repeat ?")
+                            continue
+
+                        break
+                elif (isResponseSend(readOrSend)):
+                    handleSendMail(creds)
+                elif (isResponseGoBack(readOrSend)):
+                    st.markdown("**:red[Ok! Going to sleep mode]**")
+                    speakText("Ok! Going to sleep mode")
+                    break
+                else:
+                    # speakAndWrite("Sorry can you repeat yourself?")
+                    st.text("Sorry can you repeat yourself?")
+                    print("Sorry can you repeat yourself?")
+                    continue
+
             except Exception as e:
                 print(e)
-            if (isResponseRead(readOrSend)):
-                st.text("Okay so you want to read your emails \nPlease specify what mails do you want to read? \n1. Unread mails \n2. Starred mails \n3. Full Inbox \n4. Search mails by name \n5. Go Back")
-                speakAndWrite("Okay so you want to read your emails")
-                speakAndWrite("Please specify what mails do you want to read?")
-                speakAndWrite("Unread mails")
-                speakAndWrite("Starred mails")
-                speakAndWrite("Full inbox")
-                speakAndWrite("Search mails by name")
-                speakAndWrite("Go back")
-                while (1):
-                    readMailType = transcribe_speech()
-                    if (isResponseUnread(readMailType)):
-                        st.text("Reading out latest unread mails: ")
-                        speakAndWrite("Reading out latest unread mails: ")
-                        handleReadMail(constant.GET_PRIMARY, creds)
-                    elif (isResponseStarred(readMailType)):
-                        st.text("Reading out latest Starred mails: ")
-                        speakAndWrite("Reading out latest Starred mails: ")
-                        handleReadMail(constant.GET_STARRED, creds)
-                    elif (isResponseFullInbox(readMailType)):
-                        st.text("Reading out latest mails: ")
-                        speakAndWrite("Reading out latest mails: ")
-                        handleReadMail(constant.GET_FULL_INBOX, creds)
-                    elif (isResponseSearchByName(readMailType)):
-                        st.text("What name should I search for?")
-                        speakAndWrite("What name should I search for?")
-                        searchName = transcribe_speech_with_repeat()
-
-                        st.text("Reading out latest mails by: "+searchName)
-                        speakAndWrite(
-                            "Reading out latest mails by: "+searchName)
-                        handleReadMail(
-                            constant.SEARCH_MAIL_BY_NAME + searchName, creds)
-                    elif (isResponseGoBack(readMailType)):
-                        break
-                    else:
-                        speakAndWrite("Can you please repeat ?")
-                        continue
-
-                    break
-            elif (isResponseSend(readOrSend)):
-                handleSendMail(creds)
-            else:
-                # speakAndWrite("Sorry can you repeat yourself?")
-                st.text("Sorry can you repeat yourself?")
-                print("Sorry can you repeat yourself?")
-                continue
-
-        except Exception as e:
-            print(e)
-            st.text("Something went wrong !")
-            print("Something went wrong !")
-            break
+                st.text("Something went wrong !")
+                print("Something went wrong !")
+                break
