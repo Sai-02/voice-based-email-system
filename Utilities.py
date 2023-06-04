@@ -92,6 +92,12 @@ def isResponseGoBack(resp):
             return "go back"
     return 0
 
+def isResponseWakeWord(resp):
+    for x in ["wake", "weak", "back", "bake", "week", "weep", "cake"]:
+        if (resp and resp.lower().find(x) != -1):
+            return "wake up"
+    return 0
+
 def getMessageFromMessageID(service, messageID):
     mescontent = service.users().messages().get(userId='me', id=messageID).execute()
     # print(mescontent)
