@@ -1,7 +1,7 @@
 from __future__ import print_function
 import streamlit as st
 import streamlit.components.v1 as components
-from readMailUtilities import readmail, handleReadMail
+from readMailUtilities import readmail, handleReadMail, handleGetNewMails
 import pyttsx3
 from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead, isResponseGoBack, isResponseWakeWord
 from sendMailUtilities import handleSendMail
@@ -61,6 +61,7 @@ def speakAndWrite(val):
 
 timePassed = 0
 
+prevMail=""
 if start_app:
     while(1):
         st.text("in loop")
@@ -68,8 +69,9 @@ if start_app:
         shouldWakeApplication = wake_application()
         if(not isResponseWakeWord(shouldWakeApplication)):
             if(timePassed > 8):
-                st.text("Checking for New mail")
+                handleGetNewMails()
                 timePassed = 0
+                
             continue
         st.markdown("**:orange[Starting the Application]**")
         speakText("Starting the Application")

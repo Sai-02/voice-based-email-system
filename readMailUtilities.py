@@ -178,3 +178,58 @@ def removeLinks(content):
     content = re.sub(r'http\S+', ' ', content)
     content = re.sub(r'https\S+', ' ', content)
     return content
+
+
+def handleGetNewMails(readMailCategory, creds):
+    service = build('gmail', 'v1', credentials=creds)
+    inbox = getLastTenMails(service, readMailCategory)
+    for i in range(len(inbox)):
+        dictionary = getMessageFromMessageID(
+            service, inbox[i]["id"])
+        try:
+            # जय श्री राम
+            senderDetails = [sub['value'] for sub in dictionary['payload']
+                             ['headers'] if sub['name'] == constant.FROM][0]
+            subject = [sub['value'] for sub in dictionary['payload']
+                       ['headers'] if sub['name'] == constant.SUBJECT][0]
+            headerId = [sub['value'] for sub in dictionary['payload']
+                        ['headers'] if sub['name'] == constant.MESSAGE_ID][0]
+            senderarr = senderDetails.split(' ')
+            senderarrlen = len(senderarr)
+            senderEmail = senderarr[senderarrlen - 1]
+            # Removing "<" & ">" from email
+            senderEmail = re.sub("\<", " ", senderEmail)
+            senderEmail = re.sub("\>", " ", senderEmail)
+            senderName = " ".join(senderarr[0: (senderarrlen - 1)])
+
+            st.text(senderName + " says " + subject +
+                    "\n1. Read Emails \n2. Next Emails \n3.Go back")
+            speakAndWrite(senderName + " says " + subject)
+            speakAndWrite("Read email")
+            speakAndWrite("Next mail")
+            speakAndWrite("Go back")
+            shouldGoBack = 0
+            while (1):
+                shouldReadNext = transcribe_speech()
+                if (isResponseRead(shouldReadNext)):
+                    speakAndWrite("Here is the mail: ")
+                    mailBody = readmail(dictionary)
+                    st.text("Here is the mail: \n")
+                    readEmailInParts(mailBody)
+                    speakAndWrite("                       ")
+                    speakAndWrite("Over")
+                    markEmailAsRead(service, inbox[i]["id"])
+                    handleAttachments(
+                        dictionary, service, inbox[i]["id"])
+                    handleMailActions(service, senderEmail,
+                                      inbox[i]["id"], inbox[i], subject, headerId, dictionary)
+                elif (isResponseGoBack(shouldReadNext)):
+                    shouldGoBack = 1
+                else:
+                    speakText("Can you repeat again")
+                    continue
+                break
+            if (shouldGoBack):
+                break
+        except Exception as e:
+            print(e)
