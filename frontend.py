@@ -59,13 +59,21 @@ def speakAndWrite(val):
     speakText(val)
 
 
+timePassed = 0
+
 if start_app:
     while(1):
+        st.text("in loop")
+        timePassed += 1
         shouldWakeApplication = wake_application()
         if(not isResponseWakeWord(shouldWakeApplication)):
+            if(timePassed > 8):
+                st.text("Checking for New mail")
+                timePassed = 0
             continue
         st.markdown("**:orange[Starting the Application]**")
         speakText("Starting the Application")
+        timePassed = 0
         while(1):
             try:
                 st.text("What do you want to do\n1. Read Emails \n2. Send Email \n3. Go Back")
