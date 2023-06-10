@@ -13,22 +13,22 @@ def handleAttachments(data, service, messageID):
     attachmentList = getAttachmentIDs(data, constant.APPLICATION_PDF)
 
     if (len(attachmentList) == 0):
-        speakText("This  mail has no attachments")
-        st.text("This  mail has no attachments")
+        st.text("This mail has no attachments")
+        speakText("This mail has no attachments")
         return
-    speakText("This mail has "+str(len(attachmentList))+" attachments")
     st.text("This mail has "+str(len(attachmentList))+" attachments")
-    speakText("Do  u want to read attachments")
-    st.text("Do  u want to read attachments")
+    speakText("This mail has "+str(len(attachmentList))+" attachments")
+    st.text("Do u want to read attachments?")
+    speakText("Do u want to read attachments?")
     res = transcribe_speech_with_repeat()
     if (isResponseYes(res)):
-        speakText("Doing...")
-        st.text("Doing...")
+        st.text("Getting attachments...")
+        speakText("Getting attachments...")
         for attachment in attachmentList:
             st.text("Name of the file is "+attachment["fileName"])
             speakText("Name of the file is "+attachment["fileName"])
-            st.text("Do  u want to read it ?")
-            speakText("Do  u want to read it ?")
+            st.text("Do u want to read it ?")
+            speakText("Do u want to read it ?")
             res = transcribe_speech_with_repeat()
             if (isResponseYes(res)):
                 readableText = getAttachments(
