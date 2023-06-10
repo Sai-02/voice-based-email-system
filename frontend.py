@@ -27,6 +27,8 @@ hide_streamlit_style = """
             footer {visibility: hidden;}
             .css-14xtw13{opacity: 0 !important;}
             *{margin:0;padding:0;box-sizing:border-box}
+            div[data-testid="column"]:nth-of-type(2)
+            {text-align: end;} 
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)

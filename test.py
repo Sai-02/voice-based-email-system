@@ -42,7 +42,6 @@ def transcribe_speech():
         r.adjust_for_ambient_noise(source, duration=0.75)
         with st.spinner("Listening..."):
             audio = r.listen(source)
-            st.write("Transcribing...")
             try:
                 text = r.recognize_google(audio, language='en-IN')
                 functions = [Utilities.isResponse1, Utilities.isResponse2, Utilities.isResponse3, Utilities.isResponseFullInbox, Utilities.isResponseGoBack, Utilities.isResponseNext, Utilities.isResponseRead, Utilities.isResponseSearchByName, Utilities.isResponseSend, Utilities.isResponseStarred, Utilities.isResponseUnread, Utilities.isResponseYes]
@@ -50,7 +49,12 @@ def transcribe_speech():
                 #     if fn(text):        
                 #         text = fn(text)
                 #         break
-                st.markdown("You said: **:green["+text+"]**")
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.markdown('')
+                with col2:
+                    st.markdown("You said: **:green["+text+"]**")
                 return text
             except sr.UnknownValueError:
                 st.write("Could not understand audio")
