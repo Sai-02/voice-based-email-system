@@ -54,7 +54,7 @@ def transcribe_speech():
                 with col1:
                     st.markdown('')
                 with col2:
-                    st.markdown("You said: **:green["+text+"]**")
+                    st.markdown(f'<div style="margin-bottom:15px;width:100%;display:flex;justify-content:right;"><div style="padding:5px 15px 5px 15px;width:fit-content;text-align:center;background-color: #83de76;color:black;font-size:16px;border-radius:10px 10px 0px 10px"><span style="font-weight:600;">You said:</span> '+text+'</div></div>', unsafe_allow_html=True)
                 return text
             except sr.UnknownValueError:
                 st.write("Could not understand audio")
