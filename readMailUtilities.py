@@ -83,10 +83,13 @@ def handleReadMail(readMailCategory, creds):
                         dictionary, service, inbox[i]["id"])
                     handleMailActions(service, senderEmail,
                                       inbox[i]["id"], inbox[i], subject, headerId, dictionary)
+                elif (isResponseNext(shouldReadNext)):
+                    break
                 elif (isResponseGoBack(shouldReadNext)):
                     shouldGoBack = 1
                 else:
-                    speakText("Can you repeat again")
+                    st.text("Can you please repeat?")
+                    speakText("Can you please repeat?")
                     continue
                 break
             if (shouldGoBack):
