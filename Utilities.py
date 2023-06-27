@@ -32,7 +32,7 @@ def isResponse3(resp):
 
 
 def isResponseRead(resp):
-    for x in ["reed", "read", "re ead", "Gd"]:
+    for x in ["reed", "read", "re ead", "Gd", "spead", "speed", "eid"]:
         if (resp and resp.lower().find(x) != -1):
             return "read mail"
     return 0

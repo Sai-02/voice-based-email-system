@@ -7,7 +7,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
 from Utilities import isResponseYes,validateEmail
-from test import speakText, transcribe_speech_with_repeat
+from test import speakText, transcribe_speech_with_repeat_for_send
 
 
 def speakAndWrite(val):
@@ -67,35 +67,35 @@ if __name__ == '__main__':
 def handleSendMail(creds):
     st.markdown("**:blue[What is the subject of the mail?]**")
     speakAndWrite("What is the subject of the mail?")
-    subject = transcribe_speech_with_repeat()
+    subject = transcribe_speech_with_repeat_for_send()
     st.markdown("**:blue[What is the body of the email?]**")
     speakAndWrite("What is the body of the email")
-    body = transcribe_speech_with_repeat()
+    body = transcribe_speech_with_repeat_for_send()
     st.markdown("**:blue[What is receivers's mail id?]**")
     speakAndWrite("What is receivers's  mail id")
-    mailID = transcribe_speech_with_repeat()
+    mailID = transcribe_speech_with_repeat_for_send()
     mailID = mailID.replace(" ", "").replace("attherate", "@").lower()
     while (not validateEmail(mailID)):
         st.error("This Email is Invalid! Can you please repeat...", icon="💀")
         speakAndWrite("This Email is Invalid!")
         speakAndWrite("Can you please repeat?")
-        mailID = transcribe_speech_with_repeat()
+        mailID = transcribe_speech_with_repeat_for_send()
         mailID = mailID.replace(" ", "").replace("attherate", "@").lower()
 
     st.markdown("**:blue[Do you want to add cc to this mail?]**")
     speakAndWrite("Do you want to add cc to this mail?")
-    shouldAddCc = transcribe_speech_with_repeat()
+    shouldAddCc = transcribe_speech_with_repeat_for_send()
     ccMailID = ""
     if (isResponseYes(shouldAddCc)):
         st.markdown("**:blue[What is the mail id?]**")
         speakAndWrite("What is the mail id?")
-        ccMailID = transcribe_speech_with_repeat()
+        ccMailID = transcribe_speech_with_repeat_for_send()
         ccmailID = ccmailID.replace(" ", "").replace("attherate", "@").lower()
         while (not validateEmail(ccmailID)):
             st.error("This Email is Invalid! Can you please repeat...", icon="💀")
             speakAndWrite("This Email is Invalid!")
             speakAndWrite("Can you please repeat?")
-            ccmailID = transcribe_speech_with_repeat()
+            ccmailID = transcribe_speech_with_repeat_for_send()
             ccmailID = ccmailID.replace(" ", "").replace("attherate", "@").lower()
 
     try:
