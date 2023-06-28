@@ -117,8 +117,8 @@ def handleSendMail(creds):
         send_message = (service.users().messages().send
                         (userId="me", body=create_message).execute())
         print(F'Message Id: {send_message["id"]}')
-        st.text("Mail Sent!!")
-        speakAndWrite("Mail Sent!!")
+        st.markdown("**:green[Mail Sent Successfully!]**")
+        speakAndWrite("Mail Sent Successfully!")
     except HttpError as error:
         print(F'An error occurred: {error}')
         st.text("Receiver's Email Id Incorrect!")

@@ -78,7 +78,7 @@ def wake_application():
 
 
 def transcribe_speech_with_repeat_for_send():
-    predictedInput = transcribe_speech()
+    predictedInput = transcribe_speech_for_send()
     while (not predictedInput or len(predictedInput) == 0):
         speakText("Can you please repeat")
         st.text("Can you please repeat")

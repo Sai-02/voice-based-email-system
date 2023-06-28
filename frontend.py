@@ -5,7 +5,7 @@ from readMailUtilities import readmail, handleReadMail
 import pyttsx3
 from Utilities import getLastTenMails, getMessageFromMessageID, decodeMailBody, isResponse1, isResponse2, isResponse3, isResponseRead, isResponseSend, isResponseStarred, isResponseUnread, isResponseFullInbox, listen, isResponseNext, isResponseSearchByName, markEmailAsRead, isResponseGoBack, isResponseWakeWord
 from sendMailUtilities import handleSendMail
-from test import speakText, listen, transcribe_speech, transcribe_speech_with_repeat, wake_application
+from test import speakText, listen, transcribe_speech, transcribe_speech_with_repeat, transcribe_speech_with_repeat_for_send, wake_application
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -106,7 +106,7 @@ if start_app:
                         elif (isResponseSearchByName(readMailType)):
                             st.text("What name should I search for?")
                             speakAndWrite("What name should I search for?")
-                            searchName = transcribe_speech_with_repeat()
+                            searchName = transcribe_speech_with_repeat_for_send()
 
                             st.text("Reading out latest mails by: "+searchName)
                             speakAndWrite(
